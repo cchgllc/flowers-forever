@@ -75,6 +75,9 @@
       },
     });
 
+    // ── Apple Pay ──────────────────────────────────────────────────────────
+    initApplePay();
+
     // Real-time validation feedback — only show error after user leaves the field
     recurly.on('change', function (state) {
       ['number', 'month', 'year', 'cvv'].forEach(field => {
@@ -87,6 +90,54 @@
           errorEl.textContent = '';
         }
       });
+    });
+  }
+
+  /* ----------------------------------------
+     2b. APPLE PAY
+     Recurly.js handles device/browser detection.
+     The button is hidden by default and only shown
+     when applePay.ready() fires (Safari + capable device).
+  ---------------------------------------- */
+  function initApplePay() {
+    const applePayContainer = el('apple-pay-container');
+    const applePayBtn       = el('apple-pay-btn');
+    if (!applePayContainer || !applePayBtn) return;
+
+    const applePay = recurly.ApplePay({
+      country:  'US',
+      currency: 'USD',
+      label:    'Flowers Forever Subscription',
+      total:    planData.price,
+      recurring: true,
+    });
+
+    // Only show the button when the browser/device supports Apple Pay
+    applePay.ready(function () {
+      applePayContainer.style.display = 'block';
+
+      applePayBtn.addEventListener('click', function () {
+        // Validate the delivery fields before opening the Apple Pay sheet
+        if (!validateDeliveryFields()) {
+          scrollToFirstError();
+          return;
+        }
+        applePay.begin();
+      });
+    });
+
+    // Apple Pay payment sheet completed — Recurly issues a token just like
+    // the card flow; we send it to the same backend endpoint.
+    applePay.on('token', function (token) {
+      syncBillingAddressToRecurly();
+      hideMessages();
+      setSubmitLoading(true);
+      submitSubscriptionToBackend(token.id);
+    });
+
+    applePay.on('error', function (err) {
+      console.error('Apple Pay error:', err);
+      showError(err.message || 'Apple Pay could not be completed. Please try paying with a card.');
     });
   }
 

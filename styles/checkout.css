@@ -815,6 +815,53 @@
   color: var(--color-primary);
 }
 
+/* === APPLE PAY === */
+
+/*
+  Apple Pay button must use the -apple-pay-button CSS property.
+  Per Apple's guidelines, the button appearance may not be customised
+  beyond choosing a supported style/type. We use style="black" and
+  type="subscribe" to match the subscription context.
+  https://developer.apple.com/documentation/apple_pay_on_the_web/displaying_apple_pay_buttons
+*/
+.apple-pay-button {
+  display: block;
+  width: 100%;
+  min-height: 48px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  -webkit-appearance: -apple-pay-button;
+  -apple-pay-button-type: subscribe;
+  -apple-pay-button-style: black;
+}
+
+.apple-pay-button:focus {
+  outline: 3px solid rgba(200, 68, 90, 0.4);
+  outline-offset: 2px;
+}
+
+/* "or pay with card" divider between Apple Pay and the card form */
+.payment-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 20px 0 4px;
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.payment-divider::before,
+.payment-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--color-border-dark);
+}
+
 /* === DEV NOTICE === */
 .dev-notice {
   background: #fff7ed;
