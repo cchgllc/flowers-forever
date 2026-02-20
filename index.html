@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flowers Forever – Fresh Flower Subscriptions</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ===== NAVIGATION ===== -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">✿</span>
+        <span class="logo-text">Flowers Forever</span>
+      </a>
+
+      <nav class="main-nav" id="main-nav">
+        <ul class="nav-list">
+          <li><a href="#subscriptions" class="nav-link">Subscriptions</a></li>
+          <li><a href="pages/gift.html" class="nav-link">Gift a Bouquet</a></li>
+          <li><a href="pages/seasonal.html" class="nav-link">Seasonal</a></li>
+          <li><a href="pages/roses.html" class="nav-link">Roses</a></li>
+          <li><a href="pages/plants.html" class="nav-link">Plants</a></li>
+          <li><a href="#how-it-works" class="nav-link">How It Works</a></li>
+          <li><a href="pages/faq.html" class="nav-link">FAQ</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <a href="pages/account.html" class="icon-btn" title="My Account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </a>
+        <a href="checkout.html" class="icon-btn cart-btn" title="Cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count" id="cart-count">0</span>
+        </a>
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== ANNOUNCEMENT BAR ===== -->
+  <div class="announcement-bar">
+    <p>🌸 Free shipping on all subscriptions &nbsp;·&nbsp; Use code <strong>FOREVER20</strong> for 20% off your first box</p>
+  </div>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-overlay"></div>
+      <div class="hero-flower hero-flower--1">🌸</div>
+      <div class="hero-flower hero-flower--2">🌺</div>
+      <div class="hero-flower hero-flower--3">🌼</div>
+      <div class="hero-flower hero-flower--4">🌹</div>
+      <div class="hero-flower hero-flower--5">🌷</div>
+    </div>
+    <div class="hero-content container">
+      <span class="hero-eyebrow">Fresh · Seasonal · Sustainable</span>
+      <h1 class="hero-title">Beautiful Flowers,<br>Delivered Forever</h1>
+      <p class="hero-subtitle">Embrace the beauty of every season with hand-crafted bouquets delivered right to your door. Farm-fresh, ethically sourced, and always stunning.</p>
+      <div class="hero-ctas">
+        <a href="#subscriptions" class="btn btn--primary btn--lg">Get Started</a>
+        <a href="#how-it-works" class="btn btn--outline btn--lg">How It Works</a>
+      </div>
+      <div class="hero-badges">
+        <div class="badge"><span class="badge-icon">⭐</span> 4.9/5 Rating</div>
+        <div class="badge"><span class="badge-icon">🌿</span> Sustainably Sourced</div>
+        <div class="badge"><span class="badge-icon">🚚</span> Free Shipping</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TRUST BAR ===== -->
+  <section class="trust-bar">
+    <div class="container">
+      <div class="trust-items">
+        <div class="trust-item">
+          <span class="trust-num">50,000+</span>
+          <span class="trust-label">Happy Subscribers</span>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-item">
+          <span class="trust-num">4.9★</span>
+          <span class="trust-label">Average Rating</span>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-item">
+          <span class="trust-num">100%</span>
+          <span class="trust-label">Satisfaction Guarantee</span>
+        </div>
+        <div class="trust-divider"></div>
+        <div class="trust-item">
+          <span class="trust-num">30+</span>
+          <span class="trust-label">Flower Varieties</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SUBSCRIPTION PLANS ===== -->
+  <section class="subscriptions" id="subscriptions">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Our Collections</span>
+        <h2 class="section-title">Choose Your Perfect Plan</h2>
+        <p class="section-subtitle">From weekly blooms to monthly surprises — find the subscription that brings joy to your space.</p>
+      </div>
+
+      <!-- Frequency Filter -->
+      <div class="plan-filter">
+        <button class="filter-btn active" data-filter="all">All Plans</button>
+        <button class="filter-btn" data-filter="monthly">Monthly</button>
+        <button class="filter-btn" data-filter="biweekly">Bi-Weekly</button>
+        <button class="filter-btn" data-filter="weekly">Weekly</button>
+        <button class="filter-btn" data-filter="specialty">Specialty</button>
+      </div>
+
+      <div class="plans-grid" id="plans-grid">
+
+        <!-- Classic Monthly -->
+        <div class="plan-card" data-category="monthly">
+          <div class="plan-image plan-image--classic">
+            <div class="flower-display">🌸🌺🌼</div>
+          </div>
+          <div class="plan-badge plan-badge--popular">Most Popular</div>
+          <div class="plan-body">
+            <h3 class="plan-name">Classic Bouquet</h3>
+            <p class="plan-desc">A curated mix of seasonal blooms selected by our floral designers each month.</p>
+            <div class="plan-features">
+              <span class="plan-feature">✓ 15–20 stems</span>
+              <span class="plan-feature">✓ Seasonal variety</span>
+              <span class="plan-feature">✓ Free shipping</span>
+            </div>
+            <div class="plan-pricing">
+              <span class="plan-price">$50.00</span>
+              <span class="plan-period">/ month</span>
+            </div>
+            <button class="btn btn--primary btn--full plan-select-btn"
+              data-plan="1399"
+              data-plan-name="Classic Bouquet"
+              data-plan-price="50.00"
+              data-plan-period="Monthly"
+              data-plan-code="1399">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Premium Monthly -->
+        <div class="plan-card plan-card--featured" data-category="monthly">
+          <div class="plan-image plan-image--premium">
+            <div class="flower-display">🌹🌷🌻</div>
+          </div>
+          <div class="plan-badge plan-badge--best">Best Value</div>
+          <div class="plan-body">
+            <h3 class="plan-name">Premium Bouquet</h3>
+            <p class="plan-desc">Luxurious, show-stopping arrangements with premium blooms and unique varieties.</p>
+            <div class="plan-features">
+              <span class="plan-feature">✓ 25–30 stems</span>
+              <span class="plan-feature">✓ Premium blooms</span>
+              <span class="plan-feature">✓ Free shipping</span>
+            </div>
+            <div class="plan-pricing">
+              <span class="plan-price">$74.99</span>
+              <span class="plan-period">/ month</span>
+            </div>
+            <button class="btn btn--primary btn--full plan-select-btn"
+              data-plan="premium-monthly"
+              data-plan-name="Premium Bouquet"
+              data-plan-price="74.99"
+              data-plan-period="Monthly"
+              data-plan-code="premium-monthly">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Deluxe Monthly -->
+        <div class="plan-card" data-category="monthly">
+          <div class="plan-image plan-image--deluxe">
+            <div class="flower-display">💐🌺🌸</div>
+          </div>
+          <div class="plan-body">
+            <h3 class="plan-name">Deluxe Bouquet</h3>
+            <p class="plan-desc">Extra-large arrangements perfect for filling your home with color and fragrance.</p>
+            <div class="plan-features">
+              <span class="plan-feature">✓ 35–40 stems</span>
+              <span class="plan-feature">✓ Exotic varieties</span>
+              <span class="plan-feature">✓ Free shipping</span>
+            </div>
+            <div class="plan-pricing">
+              <span class="plan-price">$99.99</span>
+              <span class="plan-period">/ month</span>
+            </div>
+            <button class="btn btn--primary btn--full plan-select-btn"
+              data-plan="deluxe-monthly"
+              data-plan-name="Deluxe Bouquet"
+              data-plan-price="99.99"
+              data-plan-period="Monthly"
+              data-plan-code="deluxe-monthly">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Bi-Weekly -->
+        <div class="plan-card" data-category="biweekly">
+          <div class="plan-image plan-image--biweekly">
+            <div class="flower-display">🌼🌸💐</div>
+          </div>
+          <div class="plan-body">
+            <h3 class="plan-name">Bi-Weekly Blooms</h3>
+            <p class="plan-desc">Keep your spaces fresh with gorgeous new arrangements every two weeks.</p>
+            <div class="plan-features">
+              <span class="plan-feature">✓ 20–25 stems</span>
+              <span class="plan-feature">✓ Every 2 weeks</span>
+              <span class="plan-feature">✓ Free shipping</span>
+            </div>
+            <div class="plan-pricing">
+              <span class="plan-price">$64.99</span>
+              <span class="plan-period">/ delivery</span>
+            </div>
+            <button class="btn btn--primary btn--full plan-select-btn"
+              data-plan="biweekly"
+              data-plan-name="Bi-Weekly Blooms"
+              data-plan-price="64.99"
+              data-plan-period="Bi-Weekly"
+              data-plan-code="biweekly-delivery">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Weekly -->
+        <div class="plan-card" data-category="weekly">
+          <div class="plan-image plan-image--weekly">
+            <div class="flower-display">🌷🌹🌻</div>
+          </div>
+          <div class="plan-badge plan-badge--new">New</div>
+          <div class="plan-body">
+            <h3 class="plan-name">Weekly Fresh</h3>
+            <p class="plan-desc">For the true flower lover — a fresh, beautiful bouquet delivered every single week.</p>
+            <div class="plan-features">
+              <span class="plan-feature">✓ 15–20 stems</span>
+              <span class="plan-feature">✓ Every week</span>
+              <span class="plan-feature">✓ Free shipping</span>
+            </div>
+            <div class="plan-pricing">
+              <span class="plan-price">$44.99</span>
+              <span class="plan-period">/ week</span>
+            </div>
+            <button class="btn btn--primary btn--full plan-select-btn"
+              data-plan="weekly"
+              data-plan-name="Weekly Fresh"
+              data-plan-price="44.99"
+              data-plan-period="Weekly"
+              data-plan-code="weekly-delivery">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Roses Specialty -->
+        <div class="plan-card" data-category="specialty">
+          <div class="plan-image plan-image--roses">
+            <div class="flower-display">🌹🌹🌹</div>
+          </div>
+          <div class="plan-body">
+            <h3 class="plan-name">Rose Garden</h3>
+            <p class="plan-desc">Exclusively curated rose bouquets in seasonal colors from the finest farms.</p>
+            <div class="plan-features">
+              <span class="plan-feature">✓ 24 premium roses</span>
+              <span class="plan-feature">✓ Monthly delivery</span>
+              <span class="plan-feature">✓ Free shipping</span>
+            </div>
+            <div class="plan-pricing">
+              <span class="plan-price">$69.99</span>
+              <span class="plan-period">/ month</span>
+            </div>
+            <button class="btn btn--primary btn--full plan-select-btn"
+              data-plan="roses"
+              data-plan-name="Rose Garden"
+              data-plan-price="69.99"
+              data-plan-period="Monthly"
+              data-plan-code="roses-monthly">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Tropical Specialty -->
+        <div class="plan-card" data-category="specialty">
+          <div class="plan-image plan-image--tropical">
+            <div class="flower-display">🌺🌴🌸</div>
+          </div>
+          <div class="plan-body">
+            <h3 class="plan-name">Tropical Paradise</h3>
+            <p class="plan-desc">Exotic tropical blooms including birds of paradise, anthuriums, and heliconias.</p>
+            <div class="plan-features">
+              <span class="plan-feature">✓ 12–15 exotic stems</span>
+              <span class="plan-feature">✓ Monthly delivery</span>
+              <span class="plan-feature">✓ Free shipping</span>
+            </div>
+            <div class="plan-pricing">
+              <span class="plan-price">$84.99</span>
+              <span class="plan-period">/ month</span>
+            </div>
+            <button class="btn btn--primary btn--full plan-select-btn"
+              data-plan="tropical"
+              data-plan-name="Tropical Paradise"
+              data-plan-price="84.99"
+              data-plan-period="Monthly"
+              data-plan-code="tropical-monthly">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Pet-Safe Specialty -->
+        <div class="plan-card" data-category="specialty">
+          <div class="plan-image plan-image--petsafe">
+            <div class="flower-display">🌼🐾🌻</div>
+          </div>
+          <div class="plan-body">
+            <h3 class="plan-name">Pet-Safe Blooms</h3>
+            <p class="plan-desc">Gorgeous arrangements made entirely from pet-friendly, non-toxic flowers.</p>
+            <div class="plan-features">
+              <span class="plan-feature">✓ 100% pet-safe</span>
+              <span class="plan-feature">✓ Monthly delivery</span>
+              <span class="plan-feature">✓ Free shipping</span>
+            </div>
+            <div class="plan-pricing">
+              <span class="plan-price">$59.99</span>
+              <span class="plan-period">/ month</span>
+            </div>
+            <button class="btn btn--primary btn--full plan-select-btn"
+              data-plan="pet-safe"
+              data-plan-name="Pet-Safe Blooms"
+              data-plan-price="59.99"
+              data-plan-period="Monthly"
+              data-plan-code="petsafe-monthly">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+        <!-- Plants Specialty -->
+        <div class="plan-card" data-category="specialty">
+          <div class="plan-image plan-image--plants">
+            <div class="flower-display">🪴🌿🌱</div>
+          </div>
+          <div class="plan-body">
+            <h3 class="plan-name">Plant of the Month</h3>
+            <p class="plan-desc">A beautiful potted plant delivered each month — perfect for long-lasting greenery.</p>
+            <div class="plan-features">
+              <span class="plan-feature">✓ Curated plants</span>
+              <span class="plan-feature">✓ Monthly delivery</span>
+              <span class="plan-feature">✓ Care guide included</span>
+            </div>
+            <div class="plan-pricing">
+              <span class="plan-price">$54.99</span>
+              <span class="plan-period">/ month</span>
+            </div>
+            <button class="btn btn--primary btn--full plan-select-btn"
+              data-plan="plants"
+              data-plan-name="Plant of the Month"
+              data-plan-price="54.99"
+              data-plan-period="Monthly"
+              data-plan-code="plants-monthly">
+              Subscribe Now
+            </button>
+          </div>
+        </div>
+
+      </div><!-- /plans-grid -->
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Simple & Easy</span>
+        <h2 class="section-title">How Flowers Forever Works</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-icon">🌸</div>
+          <div class="step-number">01</div>
+          <h3 class="step-title">Choose Your Plan</h3>
+          <p class="step-desc">Browse our beautiful subscription plans and pick the one that fits your style and budget.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-icon">✏️</div>
+          <div class="step-number">02</div>
+          <h3 class="step-title">Customize</h3>
+          <p class="step-desc">Tell us your preferences — colors, occasions, and delivery schedule that works for you.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-icon">📦</div>
+          <div class="step-number">03</div>
+          <h3 class="step-title">We Curate & Ship</h3>
+          <p class="step-desc">Our expert florists hand-select your flowers from sustainable farms and package them with care.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step">
+          <div class="step-icon">💐</div>
+          <div class="step-number">04</div>
+          <h3 class="step-title">Enjoy!</h3>
+          <p class="step-desc">Fresh blooms arrive at your door, bringing life and color to your home or office.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WHY CHOOSE US ===== -->
+  <section class="why-us">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Our Promise</span>
+        <h2 class="section-title">Why Flowers Forever?</h2>
+      </div>
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">🌿</div>
+          <h3>Sustainably Sourced</h3>
+          <p>Every bloom comes from certified sustainable farms that prioritize ethical growing practices and fair wages.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">✂️</div>
+          <h3>Expert Curation</h3>
+          <p>Our team of professional florists handpicks each arrangement to ensure stunning, show-stopping bouquets.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🚚</div>
+          <h3>Always Free Shipping</h3>
+          <p>Every subscription plan includes free shipping — no hidden fees, ever. What you see is what you pay.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🔄</div>
+          <h3>Flexible & Easy</h3>
+          <p>Pause, skip, or cancel anytime. We believe subscriptions should work for you, not the other way around.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">🎁</div>
+          <h3>Perfect for Gifting</h3>
+          <p>Gift a subscription to someone special with a personalized message. Flowers are the gift that keeps giving.</p>
+        </div>
+        <div class="benefit-card">
+          <div class="benefit-icon">💯</div>
+          <h3>Freshness Guarantee</h3>
+          <p>Not happy with your flowers? We'll replace them or refund you. Your satisfaction is our top priority.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURED SECTION ===== -->
+  <section class="featured-section">
+    <div class="featured-inner">
+      <div class="featured-image-col">
+        <div class="featured-image-stack">
+          <div class="featured-img featured-img--main">
+            <div class="flower-showcase">
+              <span style="font-size:5rem">💐</span>
+              <p class="showcase-label">Hand-curated<br>Premium Bouquet</p>
+            </div>
+          </div>
+          <div class="featured-img featured-img--sm featured-img--top">
+            <div class="mini-showcase">🌹</div>
+          </div>
+          <div class="featured-img featured-img--sm featured-img--bottom">
+            <div class="mini-showcase">🌸</div>
+          </div>
+        </div>
+      </div>
+      <div class="featured-content-col">
+        <span class="section-eyebrow">Our Difference</span>
+        <h2 class="section-title">From Farm to Your<br>Front Door</h2>
+        <p>We partner directly with sustainable flower farms across Colombia, Ecuador, and the Netherlands to bring you the freshest blooms available — eliminating unnecessary middlemen to keep costs down and quality up.</p>
+        <ul class="feature-list">
+          <li>
+            <span class="feature-check">✓</span>
+            <div>
+              <strong>Farm-Direct Partnerships</strong>
+              <p>Working directly with 40+ certified farms worldwide</p>
+            </div>
+          </li>
+          <li>
+            <span class="feature-check">✓</span>
+            <div>
+              <strong>Arrives Fresh, Stays Fresh</strong>
+              <p>Flowers arrive in bud form, blooming beautifully over 7–14 days</p>
+            </div>
+          </li>
+          <li>
+            <span class="feature-check">✓</span>
+            <div>
+              <strong>Temperature-Controlled Shipping</strong>
+              <p>Specially designed boxes maintain optimal temperature during transit</p>
+            </div>
+          </li>
+        </ul>
+        <a href="#subscriptions" class="btn btn--primary">Shop Subscriptions</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== TESTIMONIALS ===== -->
+  <section class="testimonials" id="reviews">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-eyebrow">Real Reviews</span>
+        <h2 class="section-title">What Our Subscribers Say</h2>
+        <div class="overall-rating">
+          <div class="stars">★★★★★</div>
+          <span class="rating-score">4.9 out of 5</span>
+          <span class="rating-count">(2,847 reviews)</span>
+        </div>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"I've been subscribed for 8 months and every single bouquet has been stunning. The flowers last so much longer than grocery store flowers — easily 10-12 days!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">S</div>
+            <div>
+              <strong>Sarah M.</strong>
+              <span>Premium Subscriber · 8 months</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"I gifted a 3-month subscription to my mom and she absolutely loves it. She calls me every time a new box arrives to describe the flowers. Totally worth it!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">J</div>
+            <div>
+              <strong>James K.</strong>
+              <span>Gift Subscriber · 3 months</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"The pet-safe plan is a game changer! I have two cats and was always worried about toxic flowers. Now I can have beautiful blooms without any anxiety."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">L</div>
+            <div>
+              <strong>Lisa R.</strong>
+              <span>Pet-Safe Subscriber · 5 months</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"I run a small Airbnb and use the bi-weekly plan to keep the space looking fresh. My guests always comment on the flowers — they really elevate the entire experience."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">M</div>
+            <div>
+              <strong>Maria T.</strong>
+              <span>Bi-Weekly Subscriber · 1 year</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"Paused my subscription for a 2-week vacation and it was totally seamless. Came back to a beautiful delivery waiting for me. The flexibility is unmatched."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">D</div>
+            <div>
+              <strong>David W.</strong>
+              <span>Classic Subscriber · 6 months</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"The tropical subscription is absolutely gorgeous — I get birds of paradise and anthuriums that I could never find locally. It's like having a piece of Hawaii in my home!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar">A</div>
+            <div>
+              <strong>Angela P.</strong>
+              <span>Tropical Subscriber · 4 months</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA BANNER ===== -->
+  <section class="cta-banner">
+    <div class="cta-flowers">
+      <span>🌸</span><span>🌺</span><span>🌻</span><span>🌹</span><span>🌷</span>
+    </div>
+    <div class="container">
+      <h2>Ready to Fill Your World with Flowers?</h2>
+      <p>Join 50,000+ happy subscribers and get beautiful blooms delivered to your door.</p>
+      <div class="cta-banner-actions">
+        <a href="#subscriptions" class="btn btn--white btn--lg">Choose Your Plan</a>
+        <a href="pages/gift.html" class="btn btn--outline-white btn--lg">Give as a Gift</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="logo logo--footer">
+            <span class="logo-icon">✿</span>
+            <span class="logo-text">Flowers Forever</span>
+          </a>
+          <p class="footer-tagline">Bringing nature's beauty to your doorstep — sustainably, beautifully, forever.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Pinterest">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.236 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.181-.78 1.172-4.97 1.172-4.97s-.299-.598-.299-1.482c0-1.388.806-2.428 1.808-2.428.853 0 1.267.64 1.267 1.408 0 .858-.546 2.14-.828 3.33-.236.995.499 1.806 1.476 1.806 1.772 0 3.137-1.868 3.137-4.568 0-2.387-1.717-4.055-4.165-4.055-2.837 0-4.5 2.127-4.5 4.326 0 .856.33 1.773.741 2.274a.3.3 0 0 1 .069.286c-.076.312-.244.995-.277 1.134-.044.183-.146.222-.337.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.966-.527-2.292-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.522 0 10-4.477 10-10S17.523 2 12 2z"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Subscriptions</h4>
+          <ul>
+            <li><a href="#subscriptions">Classic Monthly</a></li>
+            <li><a href="#subscriptions">Premium Monthly</a></li>
+            <li><a href="#subscriptions">Deluxe Monthly</a></li>
+            <li><a href="#subscriptions">Bi-Weekly Blooms</a></li>
+            <li><a href="#subscriptions">Weekly Fresh</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Specialty</h4>
+          <ul>
+            <li><a href="#subscriptions">Rose Garden</a></li>
+            <li><a href="#subscriptions">Tropical Paradise</a></li>
+            <li><a href="#subscriptions">Pet-Safe Blooms</a></li>
+            <li><a href="#subscriptions">Plant of the Month</a></li>
+            <li><a href="pages/gift.html">Gift Subscriptions</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="pages/about.html">About Us</a></li>
+            <li><a href="pages/sustainability.html">Sustainability</a></li>
+            <li><a href="pages/faq.html">FAQ</a></li>
+            <li><a href="pages/contact.html">Contact Us</a></li>
+            <li><a href="pages/blog.html">Flower Tips Blog</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Account</h4>
+          <ul>
+            <li><a href="pages/account.html">My Account</a></li>
+            <li><a href="pages/account.html#manage">Manage Subscription</a></li>
+            <li><a href="pages/account.html#orders">Order History</a></li>
+            <li><a href="pages/account.html#billing">Billing</a></li>
+          </ul>
+          <div class="footer-contact">
+            <p>📧 hello@flowersforever.com</p>
+            <p>📞 1-800-555-BLOOM</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 Flowers Forever. All rights reserved.</p>
+        <div class="footer-links">
+          <a href="pages/privacy.html">Privacy Policy</a>
+          <a href="pages/terms.html">Terms of Service</a>
+          <a href="pages/accessibility.html">Accessibility</a>
+        </div>
+        <div class="payment-icons">
+          <span class="payment-icon">VISA</span>
+          <span class="payment-icon">MC</span>
+          <span class="payment-icon">AMEX</span>
+          <span class="payment-icon">PayPal</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

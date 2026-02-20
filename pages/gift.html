@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gift a Bouquet – Flowers Forever</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    .page-hero { background: linear-gradient(135deg, #3d1225, var(--color-primary)); color: #fff; padding: 80px 24px; text-align: center; }
+    .page-hero h1 { font-family: var(--font-heading); font-size: clamp(2rem,5vw,3rem); margin-bottom: 16px; }
+    .page-hero p { opacity: 0.85; font-size: 1.1rem; }
+    .page-main { max-width: 960px; margin: 0 auto; padding: 60px 24px 100px; }
+    .gift-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+    .gift-card { background: var(--color-bg-card); border-radius: var(--radius-lg); border: 1.5px solid var(--color-border); overflow: hidden; transition: all var(--transition-slow); }
+    .gift-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); }
+    .gift-img { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 4rem; }
+    .gift-body { padding: 20px; }
+    .gift-body h3 { font-family: var(--font-heading); font-size: 1.1rem; margin-bottom: 8px; }
+    .gift-body p { font-size: 0.875rem; color: var(--color-text-muted); margin-bottom: 16px; }
+    .gift-price { font-family: var(--font-heading); font-size: 1.5rem; color: var(--color-primary); margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner container">
+      <a href="../index.html" class="logo"><span class="logo-icon">✿</span><span class="logo-text">Flowers Forever</span></a>
+      <nav style="margin-left:auto;"><a href="../index.html" style="font-size:0.875rem;color:var(--color-text-muted);">← Back to Store</a></nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>🎁 Gift a Bouquet</h1>
+    <p>The perfect gift for any occasion — fresh flowers that keep on giving</p>
+  </section>
+
+  <main class="page-main">
+    <div class="section-header" style="margin-bottom:40px;">
+      <h2 class="section-title">Choose a Gift Subscription</h2>
+      <p class="section-subtitle">Select a duration and plan, add a personal message, and we'll handle the rest.</p>
+    </div>
+
+    <div class="gift-grid">
+      <div class="gift-card">
+        <div class="gift-img" style="background:linear-gradient(135deg,#fce4ec,#f8bbd0);">🌸</div>
+        <div class="gift-body">
+          <h3>1-Month Gift</h3>
+          <p>A single stunning bouquet — perfect for birthdays, anniversaries, or just because.</p>
+          <div class="gift-price">$49.99</div>
+          <a href="../checkout.html" class="btn btn--primary btn--full">Gift This</a>
+        </div>
+      </div>
+      <div class="gift-card">
+        <div class="gift-img" style="background:linear-gradient(135deg,#ffe0b2,#ffcc02);">💐</div>
+        <div class="gift-body">
+          <h3>3-Month Gift</h3>
+          <p>Three months of beautiful blooms — a gift they'll talk about all season long.</p>
+          <div class="gift-price">$139.99</div>
+          <a href="../checkout.html" class="btn btn--primary btn--full">Gift This</a>
+        </div>
+      </div>
+      <div class="gift-card">
+        <div class="gift-img" style="background:linear-gradient(135deg,#e8f5e9,#a5d6a7);">🌺</div>
+        <div class="gift-body">
+          <h3>6-Month Gift</h3>
+          <p>Half a year of fresh flowers — the ultimate flower lover's gift.</p>
+          <div class="gift-price">$269.99</div>
+          <a href="../checkout.html" class="btn btn--primary btn--full">Gift This</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

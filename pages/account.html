@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account – Flowers Forever</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    .account-page { min-height: 100vh; background: #f8f5f5; }
+
+    .account-header {
+      background: var(--color-bg-card);
+      border-bottom: 1px solid var(--color-border);
+      padding: 0 24px;
+    }
+
+    .account-header-inner {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .account-main {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 32px;
+    }
+
+    /* Sidebar */
+    .account-sidebar {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--color-border);
+      padding: 24px;
+      height: fit-content;
+      position: sticky;
+      top: 88px;
+    }
+
+    .account-user {
+      text-align: center;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--color-border);
+      margin-bottom: 20px;
+    }
+
+    .account-avatar {
+      width: 64px;
+      height: 64px;
+      background: linear-gradient(135deg, var(--color-primary), #e8607a);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin: 0 auto 12px;
+    }
+
+    .account-user strong {
+      display: block;
+      font-size: 0.95rem;
+    }
+
+    .account-user span {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+    }
+
+    .account-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--color-text);
+      transition: all var(--transition);
+      margin-bottom: 2px;
+    }
+
+    .account-nav-link:hover,
+    .account-nav-link.active {
+      background: var(--color-bg-soft);
+      color: var(--color-primary);
+    }
+
+    /* Content Area */
+    .account-content { display: flex; flex-direction: column; gap: 24px; }
+
+    .account-section {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--color-border);
+      overflow: hidden;
+    }
+
+    .account-section-header {
+      padding: 20px 28px;
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .account-section-header h2 {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .account-section-body { padding: 24px 28px; }
+
+    /* Subscription Status Card */
+    .sub-status-card {
+      background: linear-gradient(135deg, #fce4ec, #f9d0d8);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      border: 1.5px solid var(--color-primary-light);
+    }
+
+    .sub-status-icon { font-size: 3rem; }
+
+    .sub-status-details strong {
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .sub-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #22863a;
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 100px;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .sub-status-meta {
+      font-size: 0.85rem;
+      color: var(--color-text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sub-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+
+    /* Delivery Timeline */
+    .delivery-timeline { display: flex; flex-direction: column; gap: 16px; }
+
+    .delivery-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px;
+      background: var(--color-bg-soft);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+    }
+
+    .delivery-date {
+      text-align: center;
+      min-width: 52px;
+      background: var(--color-primary);
+      color: #fff;
+      border-radius: var(--radius-sm);
+      padding: 8px 10px;
+    }
+
+    .delivery-date .month {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      opacity: 0.85;
+    }
+
+    .delivery-date .day {
+      font-size: 1.4rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .delivery-info { flex: 1; }
+
+    .delivery-info strong {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .delivery-info span {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+    }
+
+    .delivery-status {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .delivery-status--delivered { background: #dcfce7; color: #15803d; }
+    .delivery-status--transit   { background: #dbeafe; color: #1d4ed8; }
+    .delivery-status--scheduled { background: #f1f5f9; color: #64748b; }
+
+    /* Billing Info */
+    .billing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .billing-card {
+      background: var(--color-bg-soft);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid var(--color-border);
+    }
+
+    .billing-card label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .billing-card p {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .payment-method {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .card-brand {
+      background: var(--color-text);
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      letter-spacing: 0.05em;
+    }
+
+    /* Preferences */
+    .pref-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .pref-item {
+      background: var(--color-bg-soft);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid var(--color-border);
+    }
+
+    .pref-item label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--color-text-muted);
+      display: block;
+      margin-bottom: 6px;
+    }
+
+    .pref-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .pref-tag {
+      background: var(--color-primary);
+      color: #fff;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+
+    @media (max-width: 900px) {
+      .account-main { grid-template-columns: 1fr; }
+      .account-sidebar { position: static; }
+      .billing-grid, .pref-grid { grid-template-columns: 1fr; }
+      .sub-status-card { flex-direction: column; align-items: flex-start; }
+      .sub-actions { margin-left: 0; }
+    }
+  </style>
+</head>
+<body class="account-page">
+
+  <header class="account-header">
+    <div class="account-header-inner">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">✿</span>
+        <span class="logo-text">Flowers Forever</span>
+      </a>
+      <nav style="display:flex;gap:24px;">
+        <a href="../index.html" style="font-size:0.875rem;color:var(--color-text-muted);">← Back to Store</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="account-main">
+
+    <!-- Sidebar -->
+    <aside class="account-sidebar">
+      <div class="account-user">
+        <div class="account-avatar">J</div>
+        <strong>Jane Smith</strong>
+        <span>jane@example.com</span>
+      </div>
+
+      <nav>
+        <a href="#manage" class="account-nav-link active">📦 My Subscription</a>
+        <a href="#orders" class="account-nav-link">🚚 Delivery History</a>
+        <a href="#billing" class="account-nav-link">💳 Billing</a>
+        <a href="#preferences" class="account-nav-link">🌸 Preferences</a>
+        <a href="#profile" class="account-nav-link">👤 Profile</a>
+        <a href="../index.html" class="account-nav-link" style="margin-top:20px;border-top:1px solid var(--color-border);padding-top:16px;">🚪 Sign Out</a>
+      </nav>
+    </aside>
+
+    <!-- Content -->
+    <div class="account-content">
+
+      <!-- Active Subscription -->
+      <div class="account-section" id="manage">
+        <div class="account-section-header">
+          <h2>My Subscription</h2>
+          <span style="font-size:0.8rem;color:var(--color-text-muted);">Managed by Recurly</span>
+        </div>
+        <div class="account-section-body">
+          <div class="sub-status-card">
+            <div class="sub-status-icon">💐</div>
+            <div class="sub-status-details">
+              <div class="sub-status-badge">● ACTIVE</div>
+              <strong>Classic Bouquet — Monthly</strong>
+              <div class="sub-status-meta">
+                <span>Next delivery: <strong>December 15, 2024</strong></span>
+                <span>Next billing: <strong>December 15, 2024 · $49.99</strong></span>
+                <span>Member since: November 2024</span>
+              </div>
+            </div>
+            <div class="sub-actions">
+              <button class="btn btn--outline btn--sm" onclick="alert('Pause feature requires backend integration with Recurly API')">Pause</button>
+              <button class="btn btn--outline btn--sm" onclick="alert('Skip feature requires backend integration with Recurly API')">Skip Next</button>
+              <button class="btn btn--secondary btn--sm" onclick="alert('Cancel feature requires backend integration with Recurly API — subscriptions can also be cancelled from the Recurly customer portal')">Cancel</button>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button class="btn btn--primary btn--sm" onclick="alert('Plan change requires backend integration with Recurly API')">Upgrade Plan</button>
+            <button class="btn btn--outline btn--sm" onclick="window.location.href='../index.html#subscriptions'">Browse Other Plans</button>
+            <button class="btn btn--secondary btn--sm" onclick="alert('Address update requires backend integration with Recurly API')">Update Delivery Address</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Delivery History -->
+      <div class="account-section" id="orders">
+        <div class="account-section-header">
+          <h2>Delivery History</h2>
+        </div>
+        <div class="account-section-body">
+          <div class="delivery-timeline">
+
+            <div class="delivery-item">
+              <div class="delivery-date">
+                <span class="month">DEC</span>
+                <span class="day">15</span>
+              </div>
+              <div class="delivery-info">
+                <strong>Classic Bouquet — December</strong>
+                <span>Seasonal winter blooms · 18 stems · Free shipping</span>
+              </div>
+              <span class="delivery-status delivery-status--scheduled">Scheduled</span>
+            </div>
+
+            <div class="delivery-item">
+              <div class="delivery-date">
+                <span class="month">NOV</span>
+                <span class="day">15</span>
+              </div>
+              <div class="delivery-info">
+                <strong>Classic Bouquet — November</strong>
+                <span>Autumn arrangement · Roses, sunflowers, chrysanthemums · 16 stems</span>
+              </div>
+              <span class="delivery-status delivery-status--delivered">Delivered</span>
+            </div>
+
+            <div class="delivery-item">
+              <div class="delivery-date" style="background:var(--color-text-muted);">
+                <span class="month">OCT</span>
+                <span class="day">15</span>
+              </div>
+              <div class="delivery-info">
+                <strong>Classic Bouquet — October</strong>
+                <span>Fall harvest blooms · Marigolds, dahlias · 20 stems</span>
+              </div>
+              <span class="delivery-status delivery-status--delivered">Delivered</span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- Billing -->
+      <div class="account-section" id="billing">
+        <div class="account-section-header">
+          <h2>Billing & Payment</h2>
+          <button class="btn btn--outline btn--sm" onclick="alert('Payment update requires backend integration with Recurly hosted payment pages API')">Update Payment</button>
+        </div>
+        <div class="account-section-body">
+          <div class="billing-grid">
+            <div class="billing-card">
+              <label>Payment Method</label>
+              <div class="payment-method">
+                <span class="card-brand">VISA</span>
+                <p>•••• •••• •••• 4242</p>
+              </div>
+              <p style="font-size:0.8rem;color:var(--color-text-muted);margin-top:4px;">Expires 12/26</p>
+            </div>
+            <div class="billing-card">
+              <label>Billing Cycle</label>
+              <p>Monthly · 15th of each month</p>
+              <p style="font-size:0.8rem;color:var(--color-text-muted);margin-top:4px;">Next: Dec 15, 2024 · $49.99</p>
+            </div>
+            <div class="billing-card">
+              <label>Billing Address</label>
+              <p>123 Bloom Street<br>New York, NY 10001</p>
+            </div>
+            <div class="billing-card">
+              <label>Billing History</label>
+              <p style="font-size:0.85rem;">Nov 15 · $49.99 · ✓ Paid</p>
+              <p style="font-size:0.85rem;">Oct 15 · $49.99 · ✓ Paid</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preferences -->
+      <div class="account-section" id="preferences">
+        <div class="account-section-header">
+          <h2>Flower Preferences</h2>
+          <button class="btn btn--outline btn--sm">Update Preferences</button>
+        </div>
+        <div class="account-section-body">
+          <div class="pref-grid">
+            <div class="pref-item">
+              <label>Color Preferences</label>
+              <div class="pref-tags">
+                <span class="pref-tag">Warm Tones</span>
+                <span class="pref-tag">Pastels</span>
+              </div>
+            </div>
+            <div class="pref-item">
+              <label>Primary Occasion</label>
+              <p style="font-size:0.9rem;">Home Décor</p>
+            </div>
+            <div class="pref-item">
+              <label>Allergies / Avoid</label>
+              <p style="font-size:0.9rem;color:var(--color-text-muted);">None specified</p>
+            </div>
+            <div class="pref-item">
+              <label>Pet-Safe Only</label>
+              <p style="font-size:0.9rem;">No</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recurly Portal Link -->
+      <div style="background: linear-gradient(135deg, #f0f7ff, #dbeafe); border-radius: var(--radius-lg); padding: 24px; border: 1.5px solid #93c5fd; text-align: center;">
+        <p style="font-size:0.85rem;color:#1d4ed8;margin-bottom:12px;">
+          <strong>Full Subscription Management via Recurly Customer Portal</strong><br>
+          Access advanced billing history, invoices, and subscription controls through the Recurly self-service portal.
+        </p>
+        <button class="btn btn--outline btn--sm" style="border-color:#1d4ed8;color:#1d4ed8;" onclick="alert('The Recurly customer portal URL is configured in your Recurly admin console under Configuration → Customer Portal.')">
+          Open Recurly Portal →
+        </button>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

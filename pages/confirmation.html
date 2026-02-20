@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscription Confirmed! – Flowers Forever</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    .confirmation-page { min-height: 100vh; background: var(--color-bg-soft); }
+
+    .conf-header {
+      background: var(--color-bg-card);
+      border-bottom: 1px solid var(--color-border);
+      padding: 20px 24px;
+      text-align: center;
+    }
+
+    .conf-main {
+      max-width: 680px;
+      margin: 60px auto;
+      padding: 0 24px 80px;
+      text-align: center;
+    }
+
+    .conf-icon {
+      font-size: 5rem;
+      margin-bottom: 24px;
+      animation: pop-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+
+    @keyframes pop-in {
+      from { transform: scale(0) rotate(-10deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    .conf-title {
+      font-family: var(--font-heading);
+      font-size: clamp(1.8rem, 5vw, 2.6rem);
+      font-weight: 700;
+      color: var(--color-text);
+      margin-bottom: 16px;
+    }
+
+    .conf-subtitle {
+      font-size: 1.05rem;
+      color: var(--color-text-muted);
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+
+    .conf-card {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1.5px solid var(--color-border);
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .conf-card h3 {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      color: var(--color-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .conf-detail {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--color-border);
+      font-size: 0.9rem;
+    }
+
+    .conf-detail:last-child { border-bottom: none; }
+    .conf-detail span:first-child { color: var(--color-text-muted); }
+    .conf-detail span:last-child { font-weight: 600; }
+
+    .conf-steps {
+      background: var(--color-bg-card);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      border: 1.5px solid var(--color-border);
+      margin-bottom: 32px;
+      text-align: left;
+    }
+
+    .conf-steps h3 {
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--color-text);
+    }
+
+    .conf-step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .conf-step-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .conf-step-dot {
+      width: 32px;
+      height: 32px;
+      background: var(--color-primary);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .conf-step-content strong {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 2px;
+    }
+
+    .conf-step-content p {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .conf-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .conf-social {
+      text-align: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--color-primary-light);
+    }
+
+    .conf-social p {
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      margin-bottom: 12px;
+    }
+
+    .conf-social strong {
+      font-size: 1rem;
+      color: var(--color-primary);
+    }
+
+    .conf-social .hashtag {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 0.9rem;
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body class="confirmation-page">
+
+  <header class="conf-header">
+    <a href="../index.html" class="logo">
+      <span class="logo-icon">✿</span>
+      <span class="logo-text">Flowers Forever</span>
+    </a>
+  </header>
+
+  <main class="conf-main">
+    <div class="conf-icon">🎉</div>
+    <h1 class="conf-title">You're Subscribed!</h1>
+    <p class="conf-subtitle">
+      Welcome to the Flowers Forever family! Your subscription is confirmed and your first beautiful bouquet will be on its way soon. Get ready to fall in love with your flowers!
+    </p>
+
+    <!-- Order Summary -->
+    <div class="conf-card">
+      <h3>🌸 Your Subscription</h3>
+      <div class="conf-detail">
+        <span>Plan</span>
+        <span id="conf-plan-name">Classic Bouquet</span>
+      </div>
+      <div class="conf-detail">
+        <span>Frequency</span>
+        <span id="conf-plan-period">Monthly</span>
+      </div>
+      <div class="conf-detail">
+        <span>Amount</span>
+        <span id="conf-plan-price">$49.99/month</span>
+      </div>
+      <div class="conf-detail">
+        <span>Shipping</span>
+        <span style="color: var(--color-success);">FREE</span>
+      </div>
+      <div class="conf-detail">
+        <span>Order #</span>
+        <span id="conf-order-num">FF-2024-XXXXX</span>
+      </div>
+    </div>
+
+    <!-- What Happens Next -->
+    <div class="conf-steps">
+      <h3>What Happens Next</h3>
+      <div class="conf-step-list">
+        <div class="conf-step-item">
+          <div class="conf-step-dot">✉️</div>
+          <div class="conf-step-content">
+            <strong>Confirmation Email</strong>
+            <p>Check your inbox for a confirmation email with your subscription details and receipt.</p>
+          </div>
+        </div>
+        <div class="conf-step-item">
+          <div class="conf-step-dot">🌿</div>
+          <div class="conf-step-content">
+            <strong>We Start Curating</strong>
+            <p>Our florists select the freshest seasonal blooms just for you within 1–2 business days.</p>
+          </div>
+        </div>
+        <div class="conf-step-item">
+          <div class="conf-step-dot">📦</div>
+          <div class="conf-step-content">
+            <strong>Shipped With Care</strong>
+            <p>Your bouquet is packed in our eco-friendly, temperature-controlled box and shipped to you.</p>
+          </div>
+        </div>
+        <div class="conf-step-item">
+          <div class="conf-step-dot">💐</div>
+          <div class="conf-step-content">
+            <strong>Enjoy Your Blooms</strong>
+            <p>Unbox your gorgeous flowers and follow the care instructions for lasting beauty!</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="conf-actions">
+      <a href="account.html" class="btn btn--primary">Manage My Subscription</a>
+      <a href="../index.html" class="btn btn--outline">Continue Shopping</a>
+    </div>
+
+    <!-- Social Sharing -->
+    <div class="conf-social">
+      <strong>📸 Share the Joy!</strong>
+      <p>When your bouquet arrives, share a photo with us!</p>
+      <div class="hashtag">#FlowersForever &nbsp; #FreshBloomsDelivered</div>
+    </div>
+  </main>
+
+  <script>
+    // Populate confirmation details from session
+    const savedPlan = sessionStorage.getItem('selectedPlan');
+    if (savedPlan) {
+      try {
+        const plan = JSON.parse(savedPlan);
+        document.getElementById('conf-plan-name').textContent  = plan.name || 'Classic Bouquet';
+        document.getElementById('conf-plan-period').textContent = plan.period || 'Monthly';
+        document.getElementById('conf-plan-price').textContent = '$' + (plan.price || '49.99') + '/' + (plan.period || 'month').toLowerCase();
+        sessionStorage.removeItem('selectedPlan');
+      } catch(e) {}
+    }
+
+    // Generate order number
+    const orderNum = 'FF-2024-' + Math.floor(10000 + Math.random() * 90000);
+    document.getElementById('conf-order-num').textContent = orderNum;
+  </script>
+</body>
+</html>

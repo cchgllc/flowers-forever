@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout – Flowers Forever</title>
+  <link rel="stylesheet" href="styles/main.css" />
+  <link rel="stylesheet" href="styles/checkout.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <!-- Recurly.js -->
+  <script src="https://js.recurly.com/v4/recurly.js"></script>
+  <link rel="stylesheet" href="https://js.recurly.com/v4/recurly.css" />
+</head>
+<body class="checkout-page">
+
+  <!-- Minimal Header -->
+  <header class="checkout-header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <span class="logo-icon">✿</span>
+        <span class="logo-text">Flowers Forever</span>
+      </a>
+      <div class="checkout-steps">
+        <span class="checkout-step active">1. Plan</span>
+        <span class="checkout-step-divider">›</span>
+        <span class="checkout-step active">2. Details</span>
+        <span class="checkout-step-divider">›</span>
+        <span class="checkout-step active">3. Payment</span>
+        <span class="checkout-step-divider">›</span>
+        <span class="checkout-step">4. Confirm</span>
+      </div>
+      <div class="checkout-secure">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="secure-icon"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Secure Checkout
+      </div>
+    </div>
+  </header>
+
+  <!-- Checkout Body -->
+  <main class="checkout-main">
+    <div class="checkout-container">
+
+      <!-- Left: Form -->
+      <div class="checkout-form-col">
+
+        <!-- Success / Error Messages -->
+        <div class="alert alert--success" id="success-message" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <div>
+            <strong>Subscription Confirmed!</strong>
+            <p>Your subscription has been set up successfully. Redirecting to your account...</p>
+          </div>
+        </div>
+
+        <div class="alert alert--error" id="error-message" style="display:none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div>
+            <strong>Payment Error</strong>
+            <p id="error-text">An error occurred. Please check your details and try again.</p>
+          </div>
+        </div>
+
+        <!-- FORM -->
+        <form id="subscription-form" novalidate>
+
+          <!-- Section 1: Account Info -->
+          <div class="form-section">
+            <h2 class="form-section-title">
+              <span class="form-section-num">1</span>
+              Account Information
+            </h2>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="first-name">First Name *</label>
+                <input type="text" id="first-name" name="first_name" required placeholder="Jane" autocomplete="given-name" />
+                <span class="field-error" id="first-name-error"></span>
+              </div>
+              <div class="form-group">
+                <label for="last-name">Last Name *</label>
+                <input type="text" id="last-name" name="last_name" required placeholder="Smith" autocomplete="family-name" />
+                <span class="field-error" id="last-name-error"></span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email">Email Address *</label>
+              <input type="email" id="email" name="email" required placeholder="jane@example.com" autocomplete="email" />
+              <span class="field-error" id="email-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" autocomplete="tel" />
+            </div>
+          </div>
+
+          <!-- Section 2: Delivery Address -->
+          <div class="form-section">
+            <h2 class="form-section-title">
+              <span class="form-section-num">2</span>
+              Delivery Address
+            </h2>
+            <div class="form-group">
+              <label for="address1">Street Address *</label>
+              <input type="text" id="address1" name="address1" required placeholder="123 Bloom Street" autocomplete="address-line1" />
+              <span class="field-error" id="address1-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="address2">Apt, Suite, Unit (optional)</label>
+              <input type="text" id="address2" name="address2" placeholder="Apt 4B" autocomplete="address-line2" />
+            </div>
+            <div class="form-row form-row--3">
+              <div class="form-group">
+                <label for="city">City *</label>
+                <input type="text" id="city" name="city" required placeholder="New York" autocomplete="address-level2" />
+                <span class="field-error" id="city-error"></span>
+              </div>
+              <div class="form-group">
+                <label for="state">State *</label>
+                <select id="state" name="state" required autocomplete="address-level1">
+                  <option value="">Select...</option>
+                  <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
+                  <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
+                  <option>FL</option><option>GA</option><option>HI</option><option>ID</option>
+                  <option>IL</option><option>IN</option><option>IA</option><option>KS</option>
+                  <option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+                  <option>MA</option><option>MI</option><option>MN</option><option>MS</option>
+                  <option>MO</option><option>MT</option><option>NE</option><option>NV</option>
+                  <option>NH</option><option>NJ</option><option>NM</option><option selected>NY</option>
+                  <option>NC</option><option>ND</option><option>OH</option><option>OK</option>
+                  <option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+                  <option>SD</option><option>TN</option><option>TX</option><option>UT</option>
+                  <option>VT</option><option>VA</option><option>WA</option><option>WV</option>
+                  <option>WI</option><option>WY</option>
+                </select>
+                <span class="field-error" id="state-error"></span>
+              </div>
+              <div class="form-group">
+                <label for="zip">ZIP Code *</label>
+                <input type="text" id="zip" name="zip" required placeholder="10001" maxlength="5" autocomplete="postal-code" />
+                <span class="field-error" id="zip-error"></span>
+              </div>
+            </div>
+
+            <!-- Delivery Preferences -->
+            <div class="form-group">
+              <label for="delivery-notes">Delivery Instructions (optional)</label>
+              <textarea id="delivery-notes" name="delivery_notes" rows="2" placeholder="Leave at front door, ring doorbell, etc."></textarea>
+            </div>
+          </div>
+
+          <!-- Section 3: Subscription Preferences -->
+          <div class="form-section">
+            <h2 class="form-section-title">
+              <span class="form-section-num">3</span>
+              Your Preferences
+            </h2>
+
+            <div class="form-group">
+              <label>Color Preferences</label>
+              <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" name="colors" value="warm" /> Warm Tones (reds, oranges, yellows)</label>
+                <label class="checkbox-label"><input type="checkbox" name="colors" value="cool" /> Cool Tones (purples, blues, whites)</label>
+                <label class="checkbox-label"><input type="checkbox" name="colors" value="pastel" /> Pastels & Soft Colors</label>
+                <label class="checkbox-label"><input type="checkbox" name="colors" value="bold" /> Bold & Bright</label>
+                <label class="checkbox-label"><input type="checkbox" name="colors" value="surprise" checked /> Surprise Me!</label>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="occasion">Primary Occasion</label>
+              <select id="occasion" name="occasion">
+                <option value="home">Home Décor</option>
+                <option value="office">Office / Workspace</option>
+                <option value="gift">Gift for Someone</option>
+                <option value="event">Events & Entertaining</option>
+                <option value="just-because">Just Because!</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Start Date</label>
+              <div class="radio-group">
+                <label class="radio-label">
+                  <input type="radio" name="start_date" value="asap" checked />
+                  <span>As soon as possible</span>
+                </label>
+                <label class="radio-label">
+                  <input type="radio" name="start_date" value="specific" />
+                  <span>Choose a specific date</span>
+                </label>
+              </div>
+              <input type="date" id="specific-date" name="specific_date" class="form-date" style="display:none;" />
+            </div>
+
+            <div class="form-group">
+              <label for="coupon-code">Promo Code</label>
+              <div class="coupon-row">
+                <input type="text" id="coupon-code" name="coupon_code" placeholder="e.g. FOREVER20" class="coupon-input" />
+                <button type="button" class="btn btn--secondary btn--sm" id="apply-coupon">Apply</button>
+              </div>
+              <span class="coupon-success" id="coupon-success" style="display:none;">✓ Code applied! 20% off your first box.</span>
+              <span class="coupon-error" id="coupon-error" style="display:none;">Invalid code. Please try again.</span>
+            </div>
+          </div>
+
+          <!-- Section 4: Payment (Recurly.js) -->
+          <div class="form-section payment-section">
+            <h2 class="form-section-title">
+              <span class="form-section-num">4</span>
+              Payment Information
+              <span class="secure-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Secured by Recurly
+              </span>
+            </h2>
+
+            <div class="recurly-notice">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Your payment info is encrypted and processed securely by Recurly. We never store raw card details.
+            </div>
+
+            <!-- ── Card art container ─────────────────────────────── -->
+            <div class="card-fields-box">
+
+              <!-- Card number — full width -->
+              <div class="card-field-group card-field-group--full">
+                <label class="card-field-label">Card Number</label>
+                <!-- Recurly injects an <iframe> inside this div -->
+                <div data-recurly="number" id="recurly-number" class="recurly-field-host"></div>
+                <span class="card-field-icons">
+                  <span class="card-icon">VISA</span>
+                  <span class="card-icon">MC</span>
+                  <span class="card-icon">AMEX</span>
+                </span>
+                <span class="field-error" id="number-error"></span>
+              </div>
+
+              <!-- Expiry row: MM | YYYY | CVV -->
+              <div class="card-field-row">
+                <div class="card-field-group">
+                  <label class="card-field-label">Month</label>
+                  <div data-recurly="month" id="recurly-month" class="recurly-field-host"></div>
+                  <span class="field-error" id="month-error"></span>
+                </div>
+                <div class="card-field-group">
+                  <label class="card-field-label">Year</label>
+                  <div data-recurly="year" id="recurly-year" class="recurly-field-host"></div>
+                  <span class="field-error" id="year-error"></span>
+                </div>
+                <div class="card-field-group">
+                  <label class="card-field-label">
+                    CVV
+                    <span class="cvv-hint" title="3-digit code on back of card (4 digits for Amex)">?</span>
+                  </label>
+                  <div data-recurly="cvv" id="recurly-cvv" class="recurly-field-host"></div>
+                  <span class="field-error" id="cvv-error"></span>
+                </div>
+              </div>
+
+              <!-- Name on card — side by side -->
+              <div class="card-field-row">
+                <div class="card-field-group">
+                  <label class="card-field-label" for="billing-first">First Name on Card</label>
+                  <input
+                    type="text"
+                    id="billing-first"
+                    data-recurly="first_name"
+                    class="card-text-input"
+                    placeholder="Jane"
+                    autocomplete="cc-given-name"
+                  />
+                </div>
+                <div class="card-field-group">
+                  <label class="card-field-label" for="billing-last">Last Name on Card</label>
+                  <input
+                    type="text"
+                    id="billing-last"
+                    data-recurly="last_name"
+                    class="card-text-input"
+                    placeholder="Smith"
+                    autocomplete="cc-family-name"
+                  />
+                </div>
+              </div>
+              <span class="field-error" id="billing-name-error" style="margin-top:-8px;display:block;"></span>
+
+            </div><!-- /card-fields-box -->
+
+            <!-- Hidden Recurly billing address fields (auto-populated by JS) -->
+            <input type="hidden" data-recurly="address1"     id="billing-address1" />
+            <input type="hidden" data-recurly="city"         id="billing-city" />
+            <input type="hidden" data-recurly="state"        id="billing-state" />
+            <input type="hidden" data-recurly="postal_code"  id="billing-zip" />
+            <input type="hidden" data-recurly="country"      value="US" />
+
+            <!-- Recurly token output (populated by recurly.token()) -->
+            <input type="hidden" name="recurly-token" data-recurly="token" id="recurly-token" />
+
+            <!-- Billing address toggle -->
+            <label class="billing-same-label">
+              <input type="checkbox" id="billing-same-as-delivery" checked />
+              <span>Billing address same as delivery address</span>
+            </label>
+
+            <!-- Separate billing address (shown when checkbox unchecked) -->
+            <div id="billing-address-fields" class="billing-alt-address" style="display:none;">
+              <div class="form-group">
+                <label for="billing-street">Billing Street Address</label>
+                <input type="text" id="billing-street" placeholder="123 Main St" autocomplete="billing address-line1" />
+              </div>
+              <div class="form-row form-row--3">
+                <div class="form-group">
+                  <label for="billing-city-input">City</label>
+                  <input type="text" id="billing-city-input" placeholder="New York" autocomplete="billing address-level2" />
+                </div>
+                <div class="form-group">
+                  <label for="billing-state-input">State</label>
+                  <select id="billing-state-input" autocomplete="billing address-level1">
+                    <option value="">Select…</option>
+                    <option>AL</option><option>AK</option><option>AZ</option><option>AR</option>
+                    <option>CA</option><option>CO</option><option>CT</option><option>DE</option>
+                    <option>FL</option><option>GA</option><option>HI</option><option>ID</option>
+                    <option>IL</option><option>IN</option><option>IA</option><option>KS</option>
+                    <option>KY</option><option>LA</option><option>ME</option><option>MD</option>
+                    <option>MA</option><option>MI</option><option>MN</option><option>MS</option>
+                    <option>MO</option><option>MT</option><option>NE</option><option>NV</option>
+                    <option>NH</option><option>NJ</option><option>NM</option><option selected>NY</option>
+                    <option>NC</option><option>ND</option><option>OH</option><option>OK</option>
+                    <option>OR</option><option>PA</option><option>RI</option><option>SC</option>
+                    <option>SD</option><option>TN</option><option>TX</option><option>UT</option>
+                    <option>VT</option><option>VA</option><option>WA</option><option>WV</option>
+                    <option>WI</option><option>WY</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="billing-zip-input">ZIP Code</label>
+                  <input type="text" id="billing-zip-input" placeholder="10001" maxlength="5" autocomplete="billing postal-code" />
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /payment section -->
+
+          <!-- Submit -->
+          <div class="form-submit-area">
+            <p class="submit-terms">By subscribing, you agree to our <a href="pages/terms.html" target="_blank">Terms of Service</a> and <a href="pages/privacy.html" target="_blank">Privacy Policy</a>. Your subscription will renew automatically. Cancel anytime from your account.</p>
+            <button type="submit" class="btn btn--primary btn--lg btn--submit" id="submit-btn">
+              <span class="submit-text">Start My Subscription</span>
+              <span class="submit-loading" style="display:none;">
+                <svg class="spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                Processing...
+              </span>
+            </button>
+            <div class="submit-guarantee">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              30-day freshness guarantee · Cancel anytime · Free shipping included
+            </div>
+          </div>
+
+        </form>
+      </div><!-- /form col -->
+
+      <!-- Right: Order Summary -->
+      <div class="checkout-summary-col">
+        <div class="order-summary">
+          <h3 class="summary-title">Order Summary</h3>
+
+          <div class="summary-plan" id="summary-plan">
+            <div class="summary-plan-icon">💐</div>
+            <div class="summary-plan-info">
+              <span class="summary-plan-name" id="summary-plan-name">Classic Bouquet</span>
+              <span class="summary-plan-period" id="summary-plan-period">Monthly Subscription</span>
+            </div>
+            <button class="summary-change" onclick="window.history.back()">Change</button>
+          </div>
+
+          <div class="summary-details">
+            <div class="summary-row">
+              <span>Plan Price</span>
+              <span id="summary-price">$49.99</span>
+            </div>
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span class="summary-free">FREE</span>
+            </div>
+            <div class="summary-row summary-discount" id="summary-discount-row" style="display:none;">
+              <span>First Month Discount</span>
+              <span class="discount-amount" id="summary-discount">-$0.00</span>
+            </div>
+            <div class="summary-row summary-total">
+              <span>First Billing Total</span>
+              <span id="summary-total">$49.99</span>
+            </div>
+          </div>
+
+          <div class="summary-renewal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6"/><path d="M23 20v-6h-6"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+            Renews at <span id="summary-renewal-price">$49.99</span>/month. Cancel anytime.
+          </div>
+
+          <!-- What's Included -->
+          <div class="summary-includes">
+            <h4>What's Included:</h4>
+            <ul>
+              <li>✓ Hand-selected seasonal blooms</li>
+              <li>✓ Professional floral design</li>
+              <li>✓ Flower food packet</li>
+              <li>✓ Care card & tips</li>
+              <li>✓ Eco-friendly packaging</li>
+              <li>✓ Free shipping every delivery</li>
+            </ul>
+          </div>
+
+          <!-- Trust Signals -->
+          <div class="summary-trust">
+            <div class="trust-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              256-bit SSL Encryption
+            </div>
+            <div class="trust-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              100% Freshness Guarantee
+            </div>
+            <div class="trust-badge">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+              Cancel Anytime
+            </div>
+          </div>
+
+          <!-- Recurly Branding -->
+          <div class="recurly-powered">
+            <span>Subscription billing powered by</span>
+            <span class="recurly-logo">Recurly</span>
+          </div>
+        </div>
+
+        <!-- Customer Support -->
+        <div class="checkout-support">
+          <h4>Need Help?</h4>
+          <p>Our team is here for you</p>
+          <a href="tel:18005550000" class="support-link">📞 1-800-555-BLOOM</a>
+          <a href="mailto:hello@flowersforever.com" class="support-link">✉️ hello@flowersforever.com</a>
+        </div>
+      </div><!-- /summary col -->
+
+    </div><!-- /checkout-container -->
+  </main>
+
+  <footer class="checkout-footer">
+    <div class="container">
+      <p>&copy; 2024 Flowers Forever &nbsp;·&nbsp; <a href="pages/privacy.html">Privacy</a> &nbsp;·&nbsp; <a href="pages/terms.html">Terms</a></p>
+    </div>
+  </footer>
+
+  <script src="js/checkout.js"></script>
+</body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ – Flowers Forever</title>
+  <link rel="stylesheet" href="../styles/main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #3d1225, var(--color-primary));
+      color: #fff;
+      padding: 80px 24px;
+      text-align: center;
+    }
+    .page-hero h1 {
+      font-family: var(--font-heading);
+      font-size: clamp(2rem, 5vw, 3rem);
+      margin-bottom: 16px;
+    }
+    .page-hero p { opacity: 0.85; font-size: 1.1rem; }
+
+    .faq-main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 60px 24px 100px;
+    }
+
+    .faq-category { margin-bottom: 48px; }
+    .faq-category h2 {
+      font-family: var(--font-heading);
+      font-size: 1.3rem;
+      color: var(--color-primary);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--color-border);
+    }
+
+    .faq-item {
+      border: 1.5px solid var(--color-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 12px;
+      overflow: hidden;
+      background: var(--color-bg-card);
+    }
+
+    .faq-question {
+      width: 100%;
+      text-align: left;
+      padding: 18px 20px;
+      background: none;
+      border: none;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-text);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-body);
+      transition: background var(--transition);
+    }
+
+    .faq-question:hover { background: var(--color-bg-soft); }
+    .faq-question.open { color: var(--color-primary); }
+
+    .faq-chevron {
+      font-size: 1rem;
+      transition: transform 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .faq-question.open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-answer {
+      display: none;
+      padding: 0 20px 18px;
+      font-size: 0.9rem;
+      color: var(--color-text-muted);
+      line-height: 1.75;
+    }
+
+    .faq-answer.open { display: block; }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner container">
+      <a href="../index.html" class="logo">
+        <span class="logo-icon">✿</span>
+        <span class="logo-text">Flowers Forever</span>
+      </a>
+      <nav style="margin-left:auto;">
+        <a href="../index.html" style="font-size:0.875rem;color:var(--color-text-muted);">← Back to Store</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="page-hero">
+    <h1>Frequently Asked Questions</h1>
+    <p>Everything you need to know about Flowers Forever</p>
+  </section>
+
+  <main class="faq-main">
+
+    <div class="faq-category">
+      <h2>🌸 Subscriptions</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How does a Flowers Forever subscription work?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Choose a plan that suits you — monthly, bi-weekly, or weekly. We automatically bill your card on the same date each cycle and ship fresh, hand-curated flowers directly to your door. You'll receive an email notification before each delivery.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Can I skip a delivery or pause my subscription?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Absolutely! Log into your account and navigate to "My Subscription." You can skip individual deliveries, pause for up to 3 months, or change your delivery schedule anytime — as long as changes are made at least 5 business days before your next scheduled shipment.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Can I cancel my subscription at any time?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Yes! There are no cancellation fees or commitments. Cancel anytime from your account dashboard. If you cancel after a billing date, you'll still receive that cycle's delivery, but you won't be charged again.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Can I change my plan?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Yes! You can upgrade or downgrade your plan at any time from your account settings. Changes take effect on your next billing cycle.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-category">
+      <h2>🚚 Shipping & Delivery</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is shipping really free on all subscriptions?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Yes, 100% free shipping on every single delivery — always. The price you see is the price you pay, with no hidden fees.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          How long will my flowers last?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Our flowers arrive in bud form and typically bloom and last 7–14 days with proper care. Each delivery includes a flower food packet and care card with tips for maximizing longevity.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What if I'm not home when the flowers are delivered?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Our eco-friendly packaging is designed to keep flowers fresh for up to 24 hours after delivery. You can also add delivery instructions (e.g., "leave at front door" or "deliver to neighbor") when you check out.
+        </div>
+      </div>
+    </div>
+
+    <div class="faq-category">
+      <h2>💳 Billing & Payments</h2>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          What payment methods do you accept?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          We accept all major credit and debit cards (Visa, Mastercard, American Express, Discover) via our secure payment processor Recurly.
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          Is my payment information secure?
+          <span class="faq-chevron">▼</span>
+        </button>
+        <div class="faq-answer">
+          Absolutely. All payment processing is handled by Recurly, a PCI-DSS Level 1 compliant subscription billing platform. We never store your card details on our servers — all sensitive payment data is managed securely by Recurly.
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center; margin-top:60px; padding:32px; background:var(--color-bg-soft); border-radius:var(--radius-lg); border:1.5px solid var(--color-border);">
+      <h3 style="font-family:var(--font-heading);margin-bottom:12px;">Still have questions?</h3>
+      <p style="color:var(--color-text-muted);margin-bottom:20px;">Our team is happy to help!</p>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <a href="mailto:hello@flowersforever.com" class="btn btn--primary btn--sm">Email Us</a>
+        <a href="tel:18005550000" class="btn btn--outline btn--sm">Call Us</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function toggleFaq(btn) {
+      const answer = btn.nextElementSibling;
+      const isOpen = btn.classList.contains('open');
+
+      // Close all
+      document.querySelectorAll('.faq-question.open').forEach(q => {
+        q.classList.remove('open');
+        q.nextElementSibling.classList.remove('open');
+      });
+
+      if (!isOpen) {
+        btn.classList.add('open');
+        answer.classList.add('open');
+      }
+    }
+  </script>
+</body>
+</html>
