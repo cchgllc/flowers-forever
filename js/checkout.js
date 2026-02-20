@@ -305,7 +305,7 @@
   }
 
   // Backend API base URL — update if your Flask server runs elsewhere.
-  const API_BASE = 'http://localhost:5001';
+  const API_BASE = ''; // relative — works on Vercel and localhost alike
 
   function submitSubscriptionToBackend(recurlyToken) {
     const formData = collectFormData(recurlyToken);
