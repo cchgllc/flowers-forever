@@ -815,6 +815,98 @@
   color: var(--color-primary);
 }
 
+/* === PAYMENT METHOD TABS === */
+.pay-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--color-border);
+  padding-bottom: 0;
+}
+
+.pay-tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px 12px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  color: var(--color-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  transition: color var(--transition), border-color var(--transition);
+  white-space: nowrap;
+}
+
+.pay-tab svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+}
+
+.pay-tab:hover {
+  color: var(--color-text);
+}
+
+.pay-tab--active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.pay-panel {
+  animation: fadeIn 0.18s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* === BANK ACCOUNT FIELDS (ACH / SEPA) === */
+.bank-fields-box {
+  background: #fafafa;
+  border: 1.5px solid var(--color-border-dark);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 4px;
+}
+
+/* IBAN auto-formats with spaces — use monospace for readability */
+.iban-input {
+  font-family: 'Courier New', Courier, monospace;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* ACH / SEPA mandate notice */
+.bank-mandate {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: 0.8rem;
+  color: #1e40af;
+  margin-bottom: 16px;
+  line-height: 1.55;
+}
+
+.bank-mandate svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
 /* === APPLE PAY === */
 
 /*

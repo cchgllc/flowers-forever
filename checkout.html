@@ -217,93 +217,197 @@
 
             <div class="recurly-notice">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Your payment info is encrypted and processed securely by Recurly. We never store raw card details.
+              Your payment info is encrypted and processed securely by Recurly. We never store raw card or bank details.
             </div>
 
-            <!-- ── Apple Pay ──────────────────────────────────────── -->
+            <!-- ── Apple Pay (shown only in Safari on capable devices) ── -->
             <div id="apple-pay-container" style="display:none;">
               <button type="button" id="apple-pay-btn" class="apple-pay-button" lang="en" aria-label="Pay with Apple Pay"></button>
-              <div class="payment-divider">
-                <span>or pay with card</span>
-              </div>
+              <div class="payment-divider"><span>or choose a payment method</span></div>
             </div>
 
-            <!-- ── Card art container ─────────────────────────────── -->
-            <div class="card-fields-box">
+            <!-- ── Payment method tabs ────────────────────────────── -->
+            <div class="pay-tabs" role="tablist" aria-label="Payment method">
+              <button type="button" class="pay-tab pay-tab--active" role="tab"
+                      aria-selected="true"  aria-controls="panel-card" id="tab-card"   data-tab="card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Credit Card
+              </button>
+              <button type="button" class="pay-tab" role="tab"
+                      aria-selected="false" aria-controls="panel-ach"  id="tab-ach"    data-tab="ach">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                ACH / Bank
+              </button>
+              <button type="button" class="pay-tab" role="tab"
+                      aria-selected="false" aria-controls="panel-sepa" id="tab-sepa"   data-tab="sepa">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                SEPA / IBAN
+              </button>
+            </div>
 
-              <!-- Card number — full width -->
-              <div class="card-field-group card-field-group--full">
-                <label class="card-field-label">Card Number</label>
-                <!-- Recurly injects an <iframe> inside this div -->
-                <div data-recurly="number" id="recurly-number" class="recurly-field-host"></div>
-                <span class="card-field-icons">
-                  <span class="card-icon">VISA</span>
-                  <span class="card-icon">MC</span>
-                  <span class="card-icon">AMEX</span>
-                </span>
-                <span class="field-error" id="number-error"></span>
+            <!-- ── TAB PANEL: Credit Card ─────────────────────────── -->
+            <div id="panel-card" class="pay-panel pay-panel--active" role="tabpanel" aria-labelledby="tab-card">
+              <div class="card-fields-box">
+
+                <!-- Card number — full width -->
+                <div class="card-field-group card-field-group--full">
+                  <label class="card-field-label">Card Number</label>
+                  <div data-recurly="number" id="recurly-number" class="recurly-field-host"></div>
+                  <span class="card-field-icons">
+                    <span class="card-icon">VISA</span>
+                    <span class="card-icon">MC</span>
+                    <span class="card-icon">AMEX</span>
+                  </span>
+                  <span class="field-error" id="number-error"></span>
+                </div>
+
+                <!-- Expiry row: MM | YYYY | CVV -->
+                <div class="card-field-row">
+                  <div class="card-field-group">
+                    <label class="card-field-label">Month</label>
+                    <div data-recurly="month" id="recurly-month" class="recurly-field-host"></div>
+                    <span class="field-error" id="month-error"></span>
+                  </div>
+                  <div class="card-field-group">
+                    <label class="card-field-label">Year</label>
+                    <div data-recurly="year" id="recurly-year" class="recurly-field-host"></div>
+                    <span class="field-error" id="year-error"></span>
+                  </div>
+                  <div class="card-field-group">
+                    <label class="card-field-label">
+                      CVV
+                      <span class="cvv-hint" title="3-digit code on back of card (4 digits for Amex)">?</span>
+                    </label>
+                    <div data-recurly="cvv" id="recurly-cvv" class="recurly-field-host"></div>
+                    <span class="field-error" id="cvv-error"></span>
+                  </div>
+                </div>
+
+                <!-- Name on card -->
+                <div class="card-field-row">
+                  <div class="card-field-group">
+                    <label class="card-field-label" for="billing-first">First Name on Card</label>
+                    <input type="text" id="billing-first" data-recurly="first_name"
+                           class="card-text-input" placeholder="Jane" autocomplete="cc-given-name" />
+                  </div>
+                  <div class="card-field-group">
+                    <label class="card-field-label" for="billing-last">Last Name on Card</label>
+                    <input type="text" id="billing-last" data-recurly="last_name"
+                           class="card-text-input" placeholder="Smith" autocomplete="cc-family-name" />
+                  </div>
+                </div>
+                <span class="field-error" id="billing-name-error" style="margin-top:-8px;display:block;"></span>
+
+              </div><!-- /card-fields-box -->
+
+              <!-- Hidden Recurly billing address fields (auto-populated by JS) -->
+              <input type="hidden" data-recurly="address1"    id="billing-address1" />
+              <input type="hidden" data-recurly="city"        id="billing-city" />
+              <input type="hidden" data-recurly="state"       id="billing-state" />
+              <input type="hidden" data-recurly="postal_code" id="billing-zip" />
+              <input type="hidden" data-recurly="country"     value="US" />
+
+              <!-- Recurly token output (populated by recurly.token()) -->
+              <input type="hidden" name="recurly-token" data-recurly="token" id="recurly-token" />
+            </div><!-- /panel-card -->
+
+            <!-- ── TAB PANEL: ACH / US Bank Account ──────────────── -->
+            <div id="panel-ach" class="pay-panel" role="tabpanel" aria-labelledby="tab-ach" style="display:none;">
+              <div class="bank-mandate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                By providing your bank details you authorise Flowers Forever to debit your account for recurring subscription payments. You may cancel at any time.
               </div>
+              <div class="bank-fields-box">
+                <div class="form-group">
+                  <label class="card-field-label" for="ach-name">Name on Account</label>
+                  <input type="text" id="ach-name" data-recurly="name_on_account"
+                         class="card-text-input" placeholder="Jane Smith"
+                         autocomplete="name" />
+                  <span class="field-error" id="ach-name-error"></span>
+                </div>
+                <div class="card-field-row" style="grid-template-columns:1fr 1fr;">
+                  <div class="form-group">
+                    <label class="card-field-label" for="ach-routing">Routing Number</label>
+                    <input type="text" id="ach-routing" data-recurly="routing_number"
+                           class="card-text-input" placeholder="021000021"
+                           maxlength="9" inputmode="numeric" />
+                    <span class="field-error" id="ach-routing-error"></span>
+                  </div>
+                  <div class="form-group">
+                    <label class="card-field-label" for="ach-type">Account Type</label>
+                    <select id="ach-type" data-recurly="account_type" class="card-text-input">
+                      <option value="checking">Checking</option>
+                      <option value="savings">Savings</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="card-field-label" for="ach-account">Account Number</label>
+                  <input type="text" id="ach-account" data-recurly="account_number"
+                         class="card-text-input" placeholder="000123456789"
+                         inputmode="numeric" autocomplete="off" />
+                  <span class="field-error" id="ach-account-error"></span>
+                </div>
+                <div class="form-group">
+                  <label class="card-field-label" for="ach-account-confirm">Confirm Account Number</label>
+                  <input type="text" id="ach-account-confirm" data-recurly="account_number_confirmation"
+                         class="card-text-input" placeholder="000123456789"
+                         inputmode="numeric" autocomplete="off" />
+                  <span class="field-error" id="ach-confirm-error"></span>
+                </div>
+              </div>
+            </div><!-- /panel-ach -->
 
-              <!-- Expiry row: MM | YYYY | CVV -->
-              <div class="card-field-row">
-                <div class="card-field-group">
-                  <label class="card-field-label">Month</label>
-                  <div data-recurly="month" id="recurly-month" class="recurly-field-host"></div>
-                  <span class="field-error" id="month-error"></span>
+            <!-- ── TAB PANEL: SEPA / IBAN ─────────────────────────── -->
+            <div id="panel-sepa" class="pay-panel" role="tabpanel" aria-labelledby="tab-sepa" style="display:none;">
+              <div class="bank-mandate">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                By signing this mandate, you authorise Flowers Forever to collect payments from your bank account in accordance with SEPA Direct Debit rules. You are entitled to a refund within 8 weeks under the terms of your bank agreement.
+              </div>
+              <div class="bank-fields-box">
+                <div class="form-group">
+                  <label class="card-field-label" for="sepa-name">Name on Account</label>
+                  <input type="text" id="sepa-name" data-recurly="name_on_account"
+                         class="card-text-input" placeholder="Jane Smith"
+                         autocomplete="name" />
+                  <span class="field-error" id="sepa-name-error"></span>
                 </div>
-                <div class="card-field-group">
-                  <label class="card-field-label">Year</label>
-                  <div data-recurly="year" id="recurly-year" class="recurly-field-host"></div>
-                  <span class="field-error" id="year-error"></span>
-                </div>
-                <div class="card-field-group">
-                  <label class="card-field-label">
-                    CVV
-                    <span class="cvv-hint" title="3-digit code on back of card (4 digits for Amex)">?</span>
+                <div class="form-group">
+                  <label class="card-field-label" for="sepa-iban">
+                    IBAN
+                    <span class="cvv-hint" title="International Bank Account Number — up to 34 characters, starts with 2-letter country code">?</span>
                   </label>
-                  <div data-recurly="cvv" id="recurly-cvv" class="recurly-field-host"></div>
-                  <span class="field-error" id="cvv-error"></span>
+                  <input type="text" id="sepa-iban" data-recurly="iban"
+                         class="card-text-input iban-input" placeholder="DE89 3704 0044 0532 0130 00"
+                         maxlength="42" autocomplete="off" />
+                  <span class="field-error" id="sepa-iban-error"></span>
+                </div>
+                <div class="form-group">
+                  <label class="card-field-label" for="sepa-country">Country</label>
+                  <select id="sepa-country" data-recurly="country" class="card-text-input">
+                    <option value="AT">Austria</option>
+                    <option value="BE">Belgium</option>
+                    <option value="CY">Cyprus</option>
+                    <option value="EE">Estonia</option>
+                    <option value="FI">Finland</option>
+                    <option value="FR">France</option>
+                    <option value="DE" selected>Germany</option>
+                    <option value="GR">Greece</option>
+                    <option value="IE">Ireland</option>
+                    <option value="IT">Italy</option>
+                    <option value="LV">Latvia</option>
+                    <option value="LT">Lithuania</option>
+                    <option value="LU">Luxembourg</option>
+                    <option value="MT">Malta</option>
+                    <option value="NL">Netherlands</option>
+                    <option value="PT">Portugal</option>
+                    <option value="SK">Slovakia</option>
+                    <option value="SI">Slovenia</option>
+                    <option value="ES">Spain</option>
+                  </select>
                 </div>
               </div>
-
-              <!-- Name on card — side by side -->
-              <div class="card-field-row">
-                <div class="card-field-group">
-                  <label class="card-field-label" for="billing-first">First Name on Card</label>
-                  <input
-                    type="text"
-                    id="billing-first"
-                    data-recurly="first_name"
-                    class="card-text-input"
-                    placeholder="Jane"
-                    autocomplete="cc-given-name"
-                  />
-                </div>
-                <div class="card-field-group">
-                  <label class="card-field-label" for="billing-last">Last Name on Card</label>
-                  <input
-                    type="text"
-                    id="billing-last"
-                    data-recurly="last_name"
-                    class="card-text-input"
-                    placeholder="Smith"
-                    autocomplete="cc-family-name"
-                  />
-                </div>
-              </div>
-              <span class="field-error" id="billing-name-error" style="margin-top:-8px;display:block;"></span>
-
-            </div><!-- /card-fields-box -->
-
-            <!-- Hidden Recurly billing address fields (auto-populated by JS) -->
-            <input type="hidden" data-recurly="address1"     id="billing-address1" />
-            <input type="hidden" data-recurly="city"         id="billing-city" />
-            <input type="hidden" data-recurly="state"        id="billing-state" />
-            <input type="hidden" data-recurly="postal_code"  id="billing-zip" />
-            <input type="hidden" data-recurly="country"      value="US" />
-
-            <!-- Recurly token output (populated by recurly.token()) -->
-            <input type="hidden" name="recurly-token" data-recurly="token" id="recurly-token" />
+            </div><!-- /panel-sepa -->
 
             <!-- Billing address toggle -->
             <label class="billing-same-label">
