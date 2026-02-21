@@ -145,6 +145,13 @@ class handler(BaseHTTPRequestHandler):
             },
         }
 
+        # 3D Secure: attach action result token on the second submission
+        tds_result = data.get("three_d_secure_action_result_token_id")
+        if tds_result:
+            subscription_body["account"]["billing_info"][
+                "three_d_secure_action_result_token_id"
+            ] = tds_result
+
         start_date = data.get("start_date", "asap")
         if start_date and start_date != "asap":
             try:
@@ -176,6 +183,19 @@ class handler(BaseHTTPRequestHandler):
         except recurly.errors.NotFoundError as e:
             return _respond(self, 404, {"success": False, "message": str(e)})
         except recurly.errors.TransactionError as e:
+            # Check if Recurly is requesting 3D Secure authentication
+            tds_token = None
+            try:
+                tds_token = e.error.params[0].get("three_d_secure_action_token_id") if e.error and e.error.params else None
+            except Exception:
+                pass
+            if tds_token:
+                logger.info("3DS required, returning action token to frontend")
+                return _respond(self, 402, {
+                    "success": False,
+                    "three_d_secure_action_token_id": tds_token,
+                    "message": "Card authentication required.",
+                })
             return _respond(self, 402, {"success": False, "message": str(e)})
         except recurly.errors.InvalidTokenError:
             return _respond(self, 422, {"success": False,

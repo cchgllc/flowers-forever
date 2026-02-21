@@ -78,6 +78,9 @@
     // ── Payment method tabs ────────────────────────────────────────────────
     initPaymentTabs();
 
+    // ── PayPal ─────────────────────────────────────────────────────────────
+    initPayPal();
+
     // ── Apple Pay ──────────────────────────────────────────────────────────
     initApplePay();
 
@@ -227,7 +230,98 @@
   }
 
   /* ----------------------------------------
-     2e. APPLE PAY
+     2d. PAYPAL
+     Uses recurly.PayPal({ display: { displayName } }).
+     Recurly renders the official PayPal button inside #paypal-button.
+     On authorisation Recurly fires a 'token' event with token.id,
+     which we pass straight to submitSubscriptionToBackend().
+     Docs: https://docs.recurly.com/recurly-subscriptions/docs/paypal
+  ---------------------------------------- */
+  function initPayPal() {
+    const container = el('paypal-button');
+    if (!container) return;
+
+    const paypal = recurly.PayPal({
+      display: { displayName: 'Flowers Forever' },
+    });
+
+    // Recurly renders the PayPal button into the container
+    paypal.attach(container);
+
+    paypal.on('token', function (token) {
+      hideMessages();
+      setSubmitLoading(true);
+      submitSubscriptionToBackend(token.id);
+    });
+
+    paypal.on('error', function (err) {
+      console.error('PayPal error:', err);
+      setSubmitLoading(false);
+      showError(err.message || 'PayPal could not complete. Please try another payment method.');
+    });
+
+    paypal.on('cancel', function () {
+      setSubmitLoading(false);
+    });
+
+    // Store reference so the submit handler can trigger the flow
+    window._recurlyPayPal = paypal;
+  }
+
+  /* ----------------------------------------
+     2e. 3D SECURE
+     Triggered reactively when the backend responds with
+     { requires_three_d_secure: true, action_token_id: '...' }.
+     We create recurly.Risk().ThreeDSecure({ actionTokenId }),
+     attach it to the #three-ds-challenge container (min 250×400 px),
+     then re-submit with the resulting action result token.
+     Docs: https://docs.recurly.com/recurly-subscriptions/docs/3d-secure
+  ---------------------------------------- */
+  function handle3DSecure(actionTokenId, originalToken) {
+    const overlay   = el('three-ds-container');
+    const challenge = el('three-ds-challenge');
+    const cancelBtn = el('three-ds-cancel');
+    if (!overlay || !challenge) return;
+
+    // Show the overlay
+    overlay.style.display = 'flex';
+    setSubmitLoading(false);
+
+    const risk         = recurly.Risk();
+    const threeDSecure = risk.ThreeDSecure({ actionTokenId: actionTokenId });
+
+    // Recurly mounts the bank challenge iframe into this element
+    threeDSecure.attach(challenge);
+
+    threeDSecure.on('token', function (token) {
+      // Authentication succeeded — re-submit with the action result token
+      overlay.style.display = 'none';
+      challenge.innerHTML   = '';
+      setSubmitLoading(true);
+      hideMessages();
+      submitSubscriptionToBackend(originalToken, token.id);
+    });
+
+    threeDSecure.on('error', function (err) {
+      console.error('3DS error:', err);
+      overlay.style.display = 'none';
+      challenge.innerHTML   = '';
+      setSubmitLoading(false);
+      showError(err.message || 'Card authentication failed. Please try again or use a different card.');
+    });
+
+    // Let the user cancel and try a different payment method
+    if (cancelBtn) {
+      cancelBtn.onclick = function () {
+        overlay.style.display = 'none';
+        challenge.innerHTML   = '';
+        setSubmitLoading(false);
+      };
+    }
+  }
+
+  /* ----------------------------------------
+     2f. APPLE PAY
      Recurly.js handles device/browser detection.
      The button is hidden by default and only shown
      when applePay.ready() fires (Safari + capable device).
@@ -516,6 +610,18 @@
           }
           submitSubscriptionToBackend(token.id);
         });
+
+      } else if (activeTab === 'paypal') {
+        // ── PayPal: button click is handled by Recurly's PayPal SDK ──
+        // The submit button isn't used for PayPal — the PayPal button
+        // inside the panel fires its own token event. If the user somehow
+        // hits submit while on the PayPal tab, trigger the flow manually.
+        setSubmitLoading(false);
+        if (window._recurlyPayPal) {
+          window._recurlyPayPal.start();
+        } else {
+          showError('PayPal is not available. Please try another payment method.');
+        }
       }
     });
   }
@@ -523,8 +629,14 @@
   // Backend API base URL — update if your Flask server runs elsewhere.
   const API_BASE = ''; // relative — works on Vercel and localhost alike
 
-  function submitSubscriptionToBackend(recurlyToken) {
+  // threeDSecureToken is only supplied on the second call after 3DS challenge
+  function submitSubscriptionToBackend(recurlyToken, threeDSecureToken) {
     const formData = collectFormData(recurlyToken);
+
+    // Attach 3DS action result token when present (second attempt after challenge)
+    if (threeDSecureToken) {
+      formData.three_d_secure_action_result_token_id = threeDSecureToken;
+    }
 
     fetch(`${API_BASE}/api/subscribe`, {
       method: 'POST',
@@ -535,12 +647,20 @@
     .then(({ ok, data }) => {
       if (ok && data.success) {
         handleSuccess(data);
+      } else if (data.three_d_secure_action_token_id) {
+        // Backend signals 3DS is required — launch the challenge overlay
+        handle3DSecure(data.three_d_secure_action_token_id, recurlyToken);
       } else {
         showError(data.message || 'Subscription failed. Please try again.');
       }
     })
     .catch(() => showError('Network error. Please check your connection and try again.'))
-    .finally(() => setSubmitLoading(false));
+    .finally(() => {
+      // Only stop loading if 3DS overlay is NOT showing
+      if (!el('three-ds-container') || el('three-ds-container').style.display === 'none') {
+        setSubmitLoading(false);
+      }
+    });
   }
 
   function handleSuccess(data) {

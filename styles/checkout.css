@@ -907,6 +907,133 @@
   margin-top: 2px;
 }
 
+/* === PAYPAL PANEL === */
+.paypal-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 8px 0 4px;
+}
+
+.paypal-desc {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+/* Recurly PayPal Complete renders the official PayPal SDK button here */
+.paypal-button-container {
+  width: 100%;
+  max-width: 360px;
+  min-height: 48px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.paypal-note {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  text-align: center;
+  line-height: 1.5;
+}
+
+.paypal-note svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+  color: var(--color-success);
+}
+
+/* === 3D SECURE CHALLENGE OVERLAY === */
+
+/*
+  Shown when the card issuer mandates Strong Customer Authentication (SCA).
+  Recurly mounts a bank-hosted authentication iframe inside #three-ds-challenge.
+  Minimum dimensions required by Recurly: 250px wide × 400px tall.
+*/
+.three-ds-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeIn 0.2s ease;
+}
+
+.three-ds-inner {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  padding: 28px 24px 20px;
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+
+.three-ds-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.three-ds-header svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  color: var(--color-primary);
+}
+
+.three-ds-desc {
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* Recurly mounts the bank auth iframe here — must be min 250 × 400 px */
+.three-ds-challenge {
+  width: 100%;
+  min-width: 250px;
+  min-height: 400px;
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: #fafafa;
+}
+
+.three-ds-cancel-btn {
+  background: none;
+  border: 1.5px solid var(--color-border-dark);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  font-size: 0.85rem;
+  font-family: var(--font-body);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all var(--transition);
+  width: 100%;
+}
+
+.three-ds-cancel-btn:hover {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
 /* === APPLE PAY === */
 
 /*

@@ -243,6 +243,11 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
                 SEPA / IBAN
               </button>
+              <button type="button" class="pay-tab" role="tab"
+                      aria-selected="false" aria-controls="panel-paypal" id="tab-paypal" data-tab="paypal">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6.5 7h8a4 4 0 0 1 0 8H9l-1 5H5l2-13z"/><path d="M9.5 11h6a2 2 0 0 1 0 4H11"/></svg>
+                PayPal
+              </button>
             </div>
 
             <!-- ── TAB PANEL: Credit Card ─────────────────────────── -->
@@ -408,6 +413,39 @@
                 </div>
               </div>
             </div><!-- /panel-sepa -->
+
+            <!-- ── TAB PANEL: PayPal ─────────────────────────────── -->
+            <div id="panel-paypal" class="pay-panel" role="tabpanel" aria-labelledby="tab-paypal" style="display:none;">
+              <div class="paypal-panel">
+                <p class="paypal-desc">
+                  Click the button below to securely pay with your PayPal account. You'll be redirected to PayPal to complete authorisation, then returned here to finish your subscription.
+                </p>
+                <!-- Recurly PayPal Complete renders the official PayPal button inside this div -->
+                <div id="paypal-button" class="paypal-button-container"></div>
+                <p class="paypal-note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  Your PayPal account details are never shared with us. Payments are processed securely by Recurly.
+                </p>
+              </div>
+            </div><!-- /panel-paypal -->
+
+            <!-- ── 3D Secure Challenge Overlay ────────────────────────
+                 Hidden by default. Recurly.js shows this when the card
+                 issuer requires Strong Customer Authentication (SCA).
+                 Minimum size required: 250 × 400 px.
+            ─────────────────────────────────────────────────────────── -->
+            <div id="three-ds-container" class="three-ds-overlay" style="display:none;" aria-live="polite" aria-label="Card authentication required">
+              <div class="three-ds-inner">
+                <div class="three-ds-header">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  <span>Secure Card Authentication</span>
+                </div>
+                <p class="three-ds-desc">Your bank requires additional verification to complete this payment. Please follow the instructions below.</p>
+                <!-- Recurly mounts the bank authentication iframe here (min 250×400) -->
+                <div id="three-ds-challenge" class="three-ds-challenge"></div>
+                <button type="button" id="three-ds-cancel" class="three-ds-cancel-btn">Cancel payment</button>
+              </div>
+            </div>
 
             <!-- Billing address toggle -->
             <label class="billing-same-label">

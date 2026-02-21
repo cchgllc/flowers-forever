@@ -96,6 +96,14 @@ def create_subscription():
         },
     }
 
+    # 3D Secure: attach action result token when the frontend sends one
+    # (second call after the customer completes the bank challenge UI)
+    tds_result = data.get("three_d_secure_action_result_token_id")
+    if tds_result:
+        subscription_body["account"]["billing_info"][
+            "three_d_secure_action_result_token_id"
+        ] = tds_result
+
     # Optional: specific start date
     start_date = data.get("start_date", "asap")
     if start_date and start_date != "asap":
@@ -142,7 +150,21 @@ def create_subscription():
         return jsonify({"success": False, "message": str(e)}), 404
 
     except recurly.errors.TransactionError as e:
-        logger.warning("Recurly TransactionError (card declined): %s", e)
+        logger.warning("Recurly TransactionError: %s", e)
+        # 3D Secure required — the error body contains a three_d_secure_action_token_id
+        # which the frontend needs to launch the challenge UI.
+        tds_token = None
+        try:
+            tds_token = e.error.params[0].get("three_d_secure_action_token_id") if e.error and e.error.params else None
+        except Exception:
+            pass
+        if tds_token:
+            logger.info("3DS required, returning action token to frontend")
+            return jsonify({
+                "success": False,
+                "three_d_secure_action_token_id": tds_token,
+                "message": "Card authentication required.",
+            }), 402
         return jsonify({"success": False, "message": str(e)}), 402
 
     except recurly.errors.InvalidTokenError as e:
