@@ -81,8 +81,6 @@
     // ── PayPal ─────────────────────────────────────────────────────────────
     initPayPal();
 
-    // ── Apple Pay ──────────────────────────────────────────────────────────
-    initApplePay();
 
     // Real-time validation feedback — only show error after user leaves the field
     recurly.on('change', function (state) {
@@ -101,7 +99,7 @@
 
   /* ----------------------------------------
      2b. PAYMENT METHOD TABS
-     Switches between Credit Card, ACH and SEPA panels.
+     Switches between Credit Card and PayPal panels.
      Active tab is stored in window._activePayTab so the
      submit handler knows which token flow to invoke.
   ---------------------------------------- */
@@ -137,100 +135,7 @@
   }
 
   /* ----------------------------------------
-     2c. BANK ACCOUNT TOKEN (ACH / SEPA)
-     Uses recurly.bankAccount.token() with plain
-     form inputs — no hosted iframes needed.
-     Recurly docs: /recurly-subscriptions/docs/bank-accounts-us-iban-bacs-becs
-  ---------------------------------------- */
-  function getBankAccountData(type) {
-    if (type === 'ach') {
-      return {
-        name_on_account:              (el('ach-name')           || {}).value || '',
-        routing_number:               (el('ach-routing')        || {}).value || '',
-        account_number:               (el('ach-account')        || {}).value || '',
-        account_number_confirmation:  (el('ach-account-confirm')|| {}).value || '',
-        account_type:                 (el('ach-type')           || {}).value || 'checking',
-        // billing address pulled from delivery fields
-        address1:    (el('billing-address1') || {}).value || '',
-        city:        (el('billing-city')     || {}).value || '',
-        state:       (el('billing-state')    || {}).value || '',
-        postal_code: (el('billing-zip')      || {}).value || '',
-        country:     'US',
-      };
-    }
-    if (type === 'sepa') {
-      return {
-        name_on_account: (el('sepa-name')    || {}).value || '',
-        iban:            (el('sepa-iban')    || {}).value.replace(/\s/g, '') || '',
-        country:         (el('sepa-country') || {}).value || 'DE',
-      };
-    }
-    return null;
-  }
-
-  function validateBankFields(type) {
-    let ok = true;
-
-    function bankErr(inputId, errId, msg) {
-      const input = el(inputId);
-      const errEl = el(errId);
-      if (!input || !input.value.trim()) {
-        if (errEl) errEl.textContent = msg;
-        if (input) input.classList.add('input-error');
-        ok = false;
-      } else {
-        if (errEl) errEl.textContent = '';
-        if (input) input.classList.remove('input-error');
-      }
-    }
-
-    if (type === 'ach') {
-      bankErr('ach-name',           'ach-name-error',    'Name on account is required.');
-      bankErr('ach-routing',        'ach-routing-error', 'Routing number is required.');
-      bankErr('ach-account',        'ach-account-error', 'Account number is required.');
-      bankErr('ach-account-confirm','ach-confirm-error', 'Please confirm your account number.');
-
-      const acct    = (el('ach-account')        || {}).value || '';
-      const confirm = (el('ach-account-confirm')|| {}).value || '';
-      if (acct && confirm && acct !== confirm) {
-        const errEl = el('ach-confirm-error');
-        if (errEl) errEl.textContent = 'Account numbers do not match.';
-        const inp = el('ach-account-confirm');
-        if (inp) inp.classList.add('input-error');
-        ok = false;
-      }
-    }
-
-    if (type === 'sepa') {
-      bankErr('sepa-name', 'sepa-name-error', 'Name on account is required.');
-      bankErr('sepa-iban', 'sepa-iban-error', 'IBAN is required.');
-
-      const iban = ((el('sepa-iban') || {}).value || '').replace(/\s/g, '');
-      if (iban && !/^[A-Z]{2}[0-9A-Z]{13,32}$/.test(iban.toUpperCase())) {
-        const errEl = el('sepa-iban-error');
-        if (errEl) errEl.textContent = 'Please enter a valid IBAN.';
-        const inp = el('sepa-iban');
-        if (inp) inp.classList.add('input-error');
-        ok = false;
-      }
-    }
-
-    return ok;
-  }
-
-  function tokenizeBankAccount(type, callback) {
-    syncBillingAddressToRecurly();
-    const data = getBankAccountData(type);
-    if (!data) return callback(new Error('Unknown bank account type.'), null);
-
-    recurly.bankAccount.token(data, function (err, token) {
-      if (err) return callback(err, null);
-      callback(null, token);
-    });
-  }
-
-  /* ----------------------------------------
-     2d. PAYPAL
+     2c. PAYPAL
      Uses recurly.PayPal({ display: { displayName } }).
      Recurly renders the official PayPal button inside #paypal-button.
      On authorisation Recurly fires a 'token' event with token.id,
@@ -269,7 +174,7 @@
   }
 
   /* ----------------------------------------
-     2e. 3D SECURE
+     2d. 3D SECURE
      Triggered reactively when the backend responds with
      { requires_three_d_secure: true, action_token_id: '...' }.
      We create recurly.Risk().ThreeDSecure({ actionTokenId }),
@@ -318,54 +223,6 @@
         setSubmitLoading(false);
       };
     }
-  }
-
-  /* ----------------------------------------
-     2f. APPLE PAY
-     Recurly.js handles device/browser detection.
-     The button is hidden by default and only shown
-     when applePay.ready() fires (Safari + capable device).
-  ---------------------------------------- */
-  function initApplePay() {
-    const applePayContainer = el('apple-pay-container');
-    const applePayBtn       = el('apple-pay-btn');
-    if (!applePayContainer || !applePayBtn) return;
-
-    const applePay = recurly.ApplePay({
-      country:  'US',
-      currency: 'USD',
-      label:    'Flowers Forever Subscription',
-      total:    planData.price,
-      recurring: true,
-    });
-
-    // Only show the button when the browser/device supports Apple Pay
-    applePay.ready(function () {
-      applePayContainer.style.display = 'block';
-
-      applePayBtn.addEventListener('click', function () {
-        // Validate the delivery fields before opening the Apple Pay sheet
-        if (!validateDeliveryFields()) {
-          scrollToFirstError();
-          return;
-        }
-        applePay.begin();
-      });
-    });
-
-    // Apple Pay payment sheet completed — Recurly issues a token just like
-    // the card flow; we send it to the same backend endpoint.
-    applePay.on('token', function (token) {
-      syncBillingAddressToRecurly();
-      hideMessages();
-      setSubmitLoading(true);
-      submitSubscriptionToBackend(token.id);
-    });
-
-    applePay.on('error', function (err) {
-      console.error('Apple Pay error:', err);
-      showError(err.message || 'Apple Pay could not be completed. Please try paying with a card.');
-    });
   }
 
   function getFieldError(field) {
@@ -541,20 +398,6 @@
   }
 
   /* ----------------------------------------
-     6b. IBAN AUTO-FORMAT
-     Formats IBAN input as groups of 4 chars (e.g. DE89 3704 0044...)
-  ---------------------------------------- */
-  const ibanInput = el('sepa-iban');
-  if (ibanInput) {
-    ibanInput.addEventListener('input', function () {
-      let val = ibanInput.value.replace(/\s+/g, '').toUpperCase();
-      // Insert a space every 4 characters
-      val = val.replace(/(.{4})/g, '$1 ').trim();
-      ibanInput.value = val;
-    });
-  }
-
-  /* ----------------------------------------
      7. FORM SUBMISSION
   ---------------------------------------- */
   const form      = el('subscription-form');
@@ -590,22 +433,6 @@
           if (err) {
             setSubmitLoading(false);
             showError(err.message || 'Payment processing failed. Please check your card details.');
-            return;
-          }
-          submitSubscriptionToBackend(token.id);
-        });
-
-      } else if (activeTab === 'ach' || activeTab === 'sepa') {
-        // ── Bank account: validate fields then tokenize ──
-        if (!validateBankFields(activeTab)) {
-          setSubmitLoading(false);
-          showError('Please fill in all required bank account fields.');
-          return;
-        }
-        tokenizeBankAccount(activeTab, function (err, token) {
-          if (err) {
-            setSubmitLoading(false);
-            showError(err.message || 'Bank account verification failed. Please check your details.');
             return;
           }
           submitSubscriptionToBackend(token.id);
