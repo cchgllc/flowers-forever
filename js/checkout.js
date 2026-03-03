@@ -75,8 +75,9 @@
       },
     });
 
-    // Real-time validation feedback — only show error after user leaves the field
+    // Track hosted field states for pre-submission validation
     recurly.on('change', function (state) {
+      window._recurlyFields = state.fields;
       ['number', 'month', 'year', 'cvv'].forEach(field => {
         const fieldState = state.fields[field];
         const errorEl    = el(field + '-error');
@@ -339,6 +340,15 @@
       if (typeof recurly === 'undefined') {
         // Demo mode — no Recurly.js loaded, call backend with null token
         submitSubscriptionToBackend('demo-token');
+        return;
+      }
+
+      // Require CVV before attempting tokenization
+      const cvvState = (window._recurlyFields || {}).cvv;
+      if (!cvvState || cvvState.empty) {
+        setSubmitLoading(false);
+        const cvvErr = el('cvv-error');
+        if (cvvErr) cvvErr.textContent = 'Please enter your CVV.';
         return;
       }
 
