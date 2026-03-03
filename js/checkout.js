@@ -75,13 +75,6 @@
       },
     });
 
-    // ── Payment method tabs ────────────────────────────────────────────────
-    initPaymentTabs();
-
-    // ── PayPal ─────────────────────────────────────────────────────────────
-    initPayPal();
-
-
     // Real-time validation feedback — only show error after user leaves the field
     recurly.on('change', function (state) {
       ['number', 'month', 'year', 'cvv'].forEach(field => {
@@ -98,83 +91,7 @@
   }
 
   /* ----------------------------------------
-     2b. PAYMENT METHOD TABS
-     Switches between Credit Card and PayPal panels.
-     Active tab is stored in window._activePayTab so the
-     submit handler knows which token flow to invoke.
-  ---------------------------------------- */
-  window._activePayTab = 'card'; // default
-
-  function initPaymentTabs() {
-    const tabs   = document.querySelectorAll('.pay-tab');
-    const panels = document.querySelectorAll('.pay-panel');
-    if (!tabs.length) return;
-
-    tabs.forEach(function (tab) {
-      tab.addEventListener('click', function () {
-        const target = tab.dataset.tab;
-        window._activePayTab = target;
-
-        // Update tab active state
-        tabs.forEach(function (t) {
-          t.classList.toggle('pay-tab--active', t === tab);
-          t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
-        });
-
-        // Show/hide panels
-        panels.forEach(function (panel) {
-          const show = panel.id === 'panel-' + target;
-          panel.style.display = show ? '' : 'none';
-          panel.classList.toggle('pay-panel--active', show);
-        });
-
-        // Clear any prior payment errors when switching tabs
-        hideMessages();
-      });
-    });
-  }
-
-  /* ----------------------------------------
-     2c. PAYPAL
-     Uses recurly.PayPal({ display: { displayName } }).
-     Recurly renders the official PayPal button inside #paypal-button.
-     On authorisation Recurly fires a 'token' event with token.id,
-     which we pass straight to submitSubscriptionToBackend().
-     Docs: https://docs.recurly.com/recurly-subscriptions/docs/paypal
-  ---------------------------------------- */
-  function initPayPal() {
-    const container = el('paypal-button');
-    if (!container) return;
-
-    const paypal = recurly.PayPal({
-      display: { displayName: 'Flowers Forever' },
-    });
-
-    // Recurly renders the PayPal button into the container
-    paypal.attach(container);
-
-    paypal.on('token', function (token) {
-      hideMessages();
-      setSubmitLoading(true);
-      submitSubscriptionToBackend(token.id);
-    });
-
-    paypal.on('error', function (err) {
-      console.error('PayPal error:', err);
-      setSubmitLoading(false);
-      showError(err.message || 'PayPal could not complete. Please try another payment method.');
-    });
-
-    paypal.on('cancel', function () {
-      setSubmitLoading(false);
-    });
-
-    // Store reference so the submit handler can trigger the flow
-    window._recurlyPayPal = paypal;
-  }
-
-  /* ----------------------------------------
-     2d. 3D SECURE
+     2b. 3D SECURE
      Triggered reactively when the backend responds with
      { requires_three_d_secure: true, action_token_id: '...' }.
      We create recurly.Risk().ThreeDSecure({ actionTokenId }),
@@ -425,31 +342,14 @@
         return;
       }
 
-      const activeTab = window._activePayTab || 'card';
-
-      if (activeTab === 'card') {
-        // ── Credit card: Recurly hosted fields token ──
-        recurly.token(form, function (err, token) {
-          if (err) {
-            setSubmitLoading(false);
-            showError(err.message || 'Payment processing failed. Please check your card details.');
-            return;
-          }
-          submitSubscriptionToBackend(token.id);
-        });
-
-      } else if (activeTab === 'paypal') {
-        // ── PayPal: button click is handled by Recurly's PayPal SDK ──
-        // The submit button isn't used for PayPal — the PayPal button
-        // inside the panel fires its own token event. If the user somehow
-        // hits submit while on the PayPal tab, trigger the flow manually.
-        setSubmitLoading(false);
-        if (window._recurlyPayPal) {
-          window._recurlyPayPal.start();
-        } else {
-          showError('PayPal is not available. Please try another payment method.');
+      recurly.token(form, function (err, token) {
+        if (err) {
+          setSubmitLoading(false);
+          showError(err.message || 'Payment processing failed. Please check your card details.');
+          return;
         }
-      }
+        submitSubscriptionToBackend(token.id);
+      });
     });
   }
 
