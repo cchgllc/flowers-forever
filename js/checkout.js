@@ -75,6 +75,12 @@
       },
     });
 
+    // ── Payment method tabs ────────────────────────────────────────────────
+    initPaymentTabs();
+
+    // ── PayPal Complete ────────────────────────────────────────────────────
+    initPayPal();
+
     // Track hosted field states for pre-submission validation
     recurly.on('change', function (state) {
       window._recurlyFields = state.fields;
@@ -92,7 +98,79 @@
   }
 
   /* ----------------------------------------
-     2b. 3D SECURE
+     2b. PAYMENT METHOD TABS
+     Switches between Credit Card and PayPal panels.
+     Active tab stored in window._activePayTab so the submit
+     handler knows which token flow to invoke.
+  ---------------------------------------- */
+  window._activePayTab = 'card'; // default
+
+  function initPaymentTabs() {
+    const tabs   = document.querySelectorAll('.pay-tab');
+    const panels = document.querySelectorAll('.pay-panel');
+    if (!tabs.length) return;
+
+    tabs.forEach(function (tab) {
+      tab.addEventListener('click', function () {
+        const target = tab.dataset.tab;
+        window._activePayTab = target;
+
+        tabs.forEach(function (t) {
+          t.classList.toggle('pay-tab--active', t === tab);
+          t.setAttribute('aria-selected', t === tab ? 'true' : 'false');
+        });
+
+        panels.forEach(function (panel) {
+          const show = panel.id === 'panel-' + target;
+          panel.style.display = show ? '' : 'none';
+          panel.classList.toggle('pay-panel--active', show);
+        });
+
+        hideMessages();
+      });
+    });
+  }
+
+  /* ----------------------------------------
+     2c. PAYPAL COMPLETE
+     Uses recurly.PayPal({ payPalComplete: { target, buttonOptions } }).
+     Recurly renders the official PayPal button inside #paypal-button.
+     On authorisation Recurly fires a 'token' event with token.id,
+     which we pass straight to submitSubscriptionToBackend().
+     Docs: https://docs.recurly.com/recurly-subscriptions/docs/paypal
+  ---------------------------------------- */
+  function initPayPal() {
+    const container = el('paypal-button');
+    if (!container) return;
+
+    const paypal = recurly.PayPal({
+      payPalComplete: {
+        target: '#paypal-button',
+        buttonOptions: {},
+      },
+    });
+
+    paypal.on('token', function (token) {
+      hideMessages();
+      setSubmitLoading(true);
+      submitSubscriptionToBackend(token.id);
+    });
+
+    paypal.on('error', function (err) {
+      console.error('PayPal error:', err);
+      setSubmitLoading(false);
+      showError(err.message || 'PayPal could not complete. Please try another payment method.');
+    });
+
+    paypal.on('cancel', function () {
+      setSubmitLoading(false);
+    });
+
+    window._recurlyPayPal = paypal;
+  }
+
+  /* ----------------------------------------
+     2d. 3D SECURE
      Triggered reactively when the backend responds with
      { requires_three_d_secure: true, action_token_id: '...' }.
      We create recurly.Risk().ThreeDSecure({ actionTokenId }),
@@ -343,23 +421,33 @@
         return;
       }
 
-      // Require CVV before attempting tokenization
-      const cvvState = (window._recurlyFields || {}).cvv;
-      if (!cvvState || cvvState.empty) {
-        setSubmitLoading(false);
-        const cvvErr = el('cvv-error');
-        if (cvvErr) cvvErr.textContent = 'Please enter your CVV.';
-        return;
-      }
+      const activeTab = window._activePayTab || 'card';
 
-      recurly.token(form, function (err, token) {
-        if (err) {
+      if (activeTab === 'card') {
+        // Require CVV before attempting tokenization
+        const cvvState = (window._recurlyFields || {}).cvv;
+        if (!cvvState || cvvState.empty) {
           setSubmitLoading(false);
-          showError(err.message || 'Payment processing failed. Please check your card details.');
+          const cvvErr = el('cvv-error');
+          if (cvvErr) cvvErr.textContent = 'Please enter your CVV.';
           return;
         }
-        submitSubscriptionToBackend(token.id);
-      });
+
+        recurly.token(form, function (err, token) {
+          if (err) {
+            setSubmitLoading(false);
+            showError(err.message || 'Payment processing failed. Please check your card details.');
+            return;
+          }
+          submitSubscriptionToBackend(token.id);
+        });
+
+      } else if (activeTab === 'paypal') {
+        // PayPal Complete renders its own button — the submit button isn't
+        // used for PayPal. If the user hits submit while on the PayPal tab,
+        // just reset loading state; the PayPal button handles the flow.
+        setSubmitLoading(false);
+      }
     });
   }
 
