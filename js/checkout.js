@@ -424,12 +424,25 @@
       const activeTab = window._activePayTab || 'card';
 
       if (activeTab === 'card') {
-        // Require CVV before attempting tokenization
-        const cvvState = (window._recurlyFields || {}).cvv;
-        if (!cvvState || cvvState.empty) {
+        // Validate all hosted card fields before attempting tokenization
+        const fields = window._recurlyFields || {};
+        const fieldMessages = {
+          number: 'Please enter your card number.',
+          month:  'Please enter your expiration month.',
+          year:   'Please enter your expiration year.',
+          cvv:    'Please enter your CVV.',
+        };
+        let cardFieldsValid = true;
+        Object.entries(fieldMessages).forEach(function ([field, message]) {
+          const state   = fields[field];
+          const errorEl = el(field + '-error');
+          if (!state || state.empty || !state.valid) {
+            cardFieldsValid = false;
+            if (errorEl) errorEl.textContent = message;
+          }
+        });
+        if (!cardFieldsValid) {
           setSubmitLoading(false);
-          const cvvErr = el('cvv-error');
-          if (cvvErr) cvvErr.textContent = 'Please enter your CVV.';
           return;
         }
 
