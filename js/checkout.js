@@ -318,17 +318,14 @@
 
   /* ----------------------------------------
      5. COUPON CODE
+     No client-side validation — the code is passed to Recurly on
+     submission and validated there. Any invalid code will be surfaced
+     as an error from the backend after the customer submits.
   ---------------------------------------- */
-  const VALID_COUPONS = {
-    'FOREVER20': { discount: 0.20, label: '20% off your first box' },
-    'WELCOME10': { discount: 0.10, label: '10% off your first box' },
-    'BLOOM15':   { discount: 0.15, label: '15% off your first box' },
-  };
-
   let appliedCoupon = null;
 
-  const applyBtn     = el('apply-coupon');
-  const couponInput  = el('coupon-code');
+  const applyBtn      = el('apply-coupon');
+  const couponInput   = el('coupon-code');
   const couponSuccess = el('coupon-success');
   const couponError   = el('coupon-error');
 
@@ -337,40 +334,20 @@
       const code = (couponInput.value || '').trim();
       if (!code) return;
 
-      const matchedKey = Object.keys(VALID_COUPONS).find(k => k.toLowerCase() === code.toLowerCase());
-      const coupon = matchedKey ? VALID_COUPONS[matchedKey] : null;
-      if (coupon) {
-        appliedCoupon = { code, ...coupon };
-        couponSuccess.textContent = `✓ Code applied! ${coupon.label}.`;
-        couponSuccess.style.display = 'block';
-        couponError.style.display   = 'none';
-        updatePriceSummary();
-      } else {
-        couponError.style.display   = 'block';
-        couponSuccess.style.display = 'none';
-        appliedCoupon = null;
-        updatePriceSummary();
-      }
+      appliedCoupon = { code };
+      couponSuccess.textContent   = '✓ Code saved — discount will be applied at checkout.';
+      couponSuccess.style.display = 'block';
+      couponError.style.display   = 'none';
     });
   }
 
   function updatePriceSummary() {
-    const basePrice  = parseFloat(planData.price);
+    const basePrice   = parseFloat(planData.price);
     const discountRow = el('summary-discount-row');
-    const discountEl  = el('summary-discount');
     const totalEl     = el('summary-total');
 
-    if (appliedCoupon) {
-      const discountAmt = (basePrice * appliedCoupon.discount).toFixed(2);
-      const totalAmt    = (basePrice - parseFloat(discountAmt)).toFixed(2);
-
-      discountEl.textContent = '-$' + discountAmt;
-      totalEl.textContent    = '$' + totalAmt;
-      if (discountRow) discountRow.style.display = '';
-    } else {
-      totalEl.textContent = '$' + basePrice.toFixed(2);
-      if (discountRow) discountRow.style.display = 'none';
-    }
+    totalEl.textContent = '$' + basePrice.toFixed(2);
+    if (discountRow) discountRow.style.display = 'none';
   }
 
   /* ----------------------------------------

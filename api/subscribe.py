@@ -162,7 +162,7 @@ class handler(BaseHTTPRequestHandler):
 
         coupon_code = data.get("coupon_code")
         if coupon_code:
-            subscription_body["coupon_codes"] = [coupon_code.strip().upper()]
+            subscription_body["coupon_codes"] = [coupon_code.strip()]
 
         try:
             subscription = client.create_subscription(subscription_body)

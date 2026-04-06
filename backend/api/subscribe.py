@@ -116,7 +116,7 @@ def create_subscription():
     # Optional: coupon code
     coupon_code = data.get("coupon_code")
     if coupon_code:
-        subscription_body["coupon_codes"] = [coupon_code.strip().upper()]
+        subscription_body["coupon_codes"] = [coupon_code.strip()]
 
     # --- Call Recurly ---
     try:
