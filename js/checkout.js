@@ -348,7 +348,10 @@
 
         if (data.valid) {
           appliedCoupon = { code, discount: data.discount };
-          couponSuccess.textContent   = `✓ Code applied! ${data.name}`;
+          const label = data.discount
+            ? `✓ Code applied! ${data.name}`
+            : `✓ Code saved — discount will be applied at checkout.`;
+          couponSuccess.textContent   = label;
           couponSuccess.style.display = 'block';
           couponError.style.display   = 'none';
           updatePriceSummary();

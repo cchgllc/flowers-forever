@@ -68,20 +68,30 @@ def validate_coupon():
 
     try:
         coupon = client.get_coupon(coupon_code)
+
+        state = getattr(coupon, "state", None)
+        if state not in ("redeemable",):
+            return jsonify({"valid": False, "message": f"This coupon is {state} and cannot be applied."})
+
+        discount = _parse_discount(coupon)
+        return jsonify({
+            "valid": True,
+            "coupon_code": coupon_code,
+            "name": getattr(coupon, "name", coupon_code),
+            "discount": discount,
+        })
+
     except recurly.errors.NotFoundError:
-        return jsonify({"valid": False, "message": "Invalid coupon code. Please try again."})
+        # May be a bulk/unique coupon sub-code — accept optimistically and
+        # let Recurly validate it when the subscription is created.
+        logger.info("Coupon %s not found via get_coupon — accepting as unique/bulk code", coupon_code)
+        return jsonify({
+            "valid": True,
+            "coupon_code": coupon_code,
+            "name": "Promo code",
+            "discount": None,
+        })
+
     except Exception:
         logger.exception("Error looking up coupon %s", coupon_code)
         return jsonify({"valid": False, "message": "Could not validate coupon. Please try again."}), 502
-
-    state = getattr(coupon, "state", None)
-    if state not in ("redeemable",):
-        return jsonify({"valid": False, "message": f"This coupon is {state} and cannot be applied."})
-
-    discount = _parse_discount(coupon)
-    return jsonify({
-        "valid": True,
-        "coupon_code": coupon_code,
-        "name": getattr(coupon, "name", coupon_code),
-        "discount": discount,
-    })

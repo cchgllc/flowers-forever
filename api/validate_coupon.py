@@ -104,21 +104,32 @@ class handler(BaseHTTPRequestHandler):
 
         try:
             coupon = client.get_coupon(coupon_code)
+
+            # Reject expired or maxed-out coupons found via get_coupon
+            state = getattr(coupon, "state", None)
+            if state not in ("redeemable",):
+                return _respond(self, 200, {"valid": False, "message": f"This coupon is {state} and cannot be applied."})
+
+            discount = _parse_discount(coupon)
+            return _respond(self, 200, {
+                "valid": True,
+                "coupon_code": coupon_code,
+                "name": getattr(coupon, "name", coupon_code),
+                "discount": discount,
+            })
+
         except recurly.errors.NotFoundError:
-            return _respond(self, 200, {"valid": False, "message": "Invalid coupon code. Please try again."})
-        except Exception as e:
+            # Code not found as a standard coupon — it may be a bulk/unique
+            # coupon sub-code. Accept it optimistically and let Recurly
+            # validate the code when the subscription is created.
+            logger.info("Coupon %s not found via get_coupon — accepting as unique/bulk code", coupon_code)
+            return _respond(self, 200, {
+                "valid": True,
+                "coupon_code": coupon_code,
+                "name": "Promo code",
+                "discount": None,
+            })
+
+        except Exception:
             logger.exception("Error looking up coupon %s", coupon_code)
             return _respond(self, 502, {"valid": False, "message": "Could not validate coupon. Please try again."})
-
-        # Reject expired or maxed-out coupons
-        state = getattr(coupon, "state", None)
-        if state not in ("redeemable",):
-            return _respond(self, 200, {"valid": False, "message": f"This coupon is {state} and cannot be applied."})
-
-        discount = _parse_discount(coupon)
-        return _respond(self, 200, {
-            "valid": True,
-            "coupon_code": coupon_code,
-            "name": getattr(coupon, "name", coupon_code),
-            "discount": discount,
-        })
