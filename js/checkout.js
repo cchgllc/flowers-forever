@@ -318,9 +318,8 @@
 
   /* ----------------------------------------
      5. COUPON CODE
-     No client-side validation — the code is passed to Recurly on
-     submission and validated there. Any invalid code will be surfaced
-     as an error from the backend after the customer submits.
+     Validates against Recurly via /api/validate_coupon on Apply.
+     Shows the real discount amount in the order summary on success.
   ---------------------------------------- */
   let appliedCoupon = null;
 
@@ -330,24 +329,68 @@
   const couponError   = el('coupon-error');
 
   if (applyBtn) {
-    applyBtn.addEventListener('click', () => {
+    applyBtn.addEventListener('click', async () => {
       const code = (couponInput.value || '').trim();
       if (!code) return;
 
-      appliedCoupon = { code };
-      couponSuccess.textContent   = '✓ Code saved — discount will be applied at checkout.';
-      couponSuccess.style.display = 'block';
+      applyBtn.disabled   = true;
+      applyBtn.textContent = 'Checking...';
+      couponSuccess.style.display = 'none';
       couponError.style.display   = 'none';
+
+      try {
+        const res  = await fetch(`${API_BASE}/api/validate_coupon`, {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body:    JSON.stringify({ coupon_code: code }),
+        });
+        const data = await res.json();
+
+        if (data.valid) {
+          appliedCoupon = { code, discount: data.discount };
+          couponSuccess.textContent   = `✓ Code applied! ${data.name}`;
+          couponSuccess.style.display = 'block';
+          couponError.style.display   = 'none';
+          updatePriceSummary();
+        } else {
+          appliedCoupon = null;
+          couponError.textContent   = data.message || 'Invalid code. Please try again.';
+          couponError.style.display = 'block';
+          updatePriceSummary();
+        }
+      } catch (err) {
+        couponError.textContent   = 'Could not validate coupon. Please try again.';
+        couponError.style.display = 'block';
+      } finally {
+        applyBtn.disabled    = false;
+        applyBtn.textContent = 'Apply';
+      }
     });
+  }
+
+  function _calcDiscount(discount, basePrice) {
+    if (!discount) return 0;
+    if (discount.type === 'percent') return basePrice * (discount.percent / 100);
+    if (discount.type === 'fixed')   return Math.min(discount.amount, basePrice);
+    return 0;
   }
 
   function updatePriceSummary() {
     const basePrice   = parseFloat(planData.price);
     const discountRow = el('summary-discount-row');
+    const discountEl  = el('summary-discount');
     const totalEl     = el('summary-total');
 
-    totalEl.textContent = '$' + basePrice.toFixed(2);
-    if (discountRow) discountRow.style.display = 'none';
+    if (appliedCoupon && appliedCoupon.discount) {
+      const discountAmt = _calcDiscount(appliedCoupon.discount, basePrice);
+      const totalAmt    = Math.max(0, basePrice - discountAmt);
+      if (discountEl)  discountEl.textContent = '-$' + discountAmt.toFixed(2);
+      if (totalEl)     totalEl.textContent    = '$' + totalAmt.toFixed(2);
+      if (discountRow) discountRow.style.display = '';
+    } else {
+      if (totalEl)     totalEl.textContent = '$' + basePrice.toFixed(2);
+      if (discountRow) discountRow.style.display = 'none';
+    }
   }
 
   /* ----------------------------------------

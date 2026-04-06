@@ -21,9 +21,10 @@ from dotenv import load_dotenv
 # Load .env before anything else
 load_dotenv()
 
-from api.subscribe import subscribe_bp
-from api.account   import account_bp
-from api.webhooks  import webhooks_bp
+from api.subscribe        import subscribe_bp
+from api.account          import account_bp
+from api.webhooks         import webhooks_bp
+from api.validate_coupon  import validate_coupon_bp
 
 
 def create_app() -> Flask:
@@ -36,9 +37,10 @@ def create_app() -> Flask:
     CORS(app, origins=[frontend_url, "http://127.0.0.1:5500"])
 
     # Register blueprints
-    app.register_blueprint(subscribe_bp, url_prefix="/api")
-    app.register_blueprint(account_bp,   url_prefix="/api")
-    app.register_blueprint(webhooks_bp,  url_prefix="/api")
+    app.register_blueprint(subscribe_bp,       url_prefix="/api")
+    app.register_blueprint(account_bp,         url_prefix="/api")
+    app.register_blueprint(webhooks_bp,        url_prefix="/api")
+    app.register_blueprint(validate_coupon_bp, url_prefix="/api")
 
     # ---- Health check ----
     @app.get("/health")
