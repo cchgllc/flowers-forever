@@ -334,7 +334,7 @@
 
   if (applyBtn) {
     applyBtn.addEventListener('click', () => {
-      const code = (couponInput.value || '').trim().toUpperCase();
+      const code = (couponInput.value || '').trim();
       if (!code) return;
 
       const coupon = VALID_COUPONS[code];

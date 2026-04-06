@@ -251,8 +251,6 @@
   border-radius: var(--radius-sm);
   font-size: 0.95rem;
   font-family: var(--font-body);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .coupon-success {
