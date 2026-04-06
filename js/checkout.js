@@ -337,7 +337,8 @@
       const code = (couponInput.value || '').trim();
       if (!code) return;
 
-      const coupon = VALID_COUPONS[code];
+      const matchedKey = Object.keys(VALID_COUPONS).find(k => k.toLowerCase() === code.toLowerCase());
+      const coupon = matchedKey ? VALID_COUPONS[matchedKey] : null;
       if (coupon) {
         appliedCoupon = { code, ...coupon };
         couponSuccess.textContent = `✓ Code applied! ${coupon.label}.`;
