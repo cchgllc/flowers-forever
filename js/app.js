@@ -59,6 +59,36 @@
     });
   });
 
+  /* ---- Live Plan Pricing from Recurly ---- */
+  (async function loadPlanPricing() {
+    try {
+      const res  = await fetch('/api/plans');
+      if (!res.ok) return; // fail silently — hardcoded prices remain
+      const data = await res.json();
+      if (!data.success || !data.plans) return;
+
+      document.querySelectorAll('.plan-card').forEach(card => {
+        const btn  = card.querySelector('.plan-select-btn');
+        if (!btn) return;
+
+        const code = btn.dataset.planCode;
+        const plan = data.plans[code];
+        if (!plan) return;
+
+        const price     = parseFloat(plan.price).toFixed(2);
+        const priceEl   = card.querySelector('.plan-price');
+
+        // Update visible price display
+        if (priceEl) priceEl.textContent = '$' + price;
+
+        // Update data attributes so checkout gets the live price
+        btn.dataset.planPrice = price;
+      });
+    } catch (e) {
+      // Network error — hardcoded prices remain, no disruption to the user
+    }
+  })();
+
   /* ---- Subscription Selection → Checkout ---- */
   const planSelectBtns = document.querySelectorAll('.plan-select-btn');
 
