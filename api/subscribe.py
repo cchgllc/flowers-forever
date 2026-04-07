@@ -18,7 +18,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 VALID_PLAN_CODES = {
-    "1399",
+    "5daysub",
     "classic-monthly",
     "premium-monthly",
     "deluxe-monthly",

@@ -7,7 +7,7 @@ from typing import Any
 
 # All valid plan codes defined in the Recurly Admin Console
 VALID_PLAN_CODES = {
-    "1399",              # Classic Bouquet — $50.00/month
+    "5daysub",           # Classic Bouquet — $100.00/month
     "classic-monthly",
     "premium-monthly",
     "deluxe-monthly",
