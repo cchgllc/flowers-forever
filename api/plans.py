@@ -1,6 +1,7 @@
 """
 Vercel Serverless Function: GET /api/plans
-Returns pricing for each plan code fetched live from Recurly.
+Lists all active plans from Recurly and returns their pricing.
+Keyed by plan code so the frontend can look up any plan by code.
 """
 
 import json
@@ -13,20 +14,6 @@ import recurly.errors
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Plan codes shown on the product page
-PLAN_CODES = [
-    "1399",
-    "classic-monthly",
-    "premium-monthly",
-    "deluxe-monthly",
-    "biweekly-delivery",
-    "weekly-delivery",
-    "roses-monthly",
-    "tropical-monthly",
-    "petsafe-monthly",
-    "plants-monthly",
-]
 
 
 def _get_client():
@@ -78,19 +65,20 @@ class handler(BaseHTTPRequestHandler):
             return _respond(self, 503, {"success": False, "message": "Recurly API key not configured."})
 
         plans = {}
-        for code in PLAN_CODES:
-            try:
-                plan = client.get_plan(code)
+        try:
+            # list_plans returns a Pager — iterate all active plans
+            for plan in client.list_plans(params={"state": "active"}).items():
+                code  = getattr(plan, "code", None)
                 price = _usd_price(plan)
-                if price is not None:
+                if code and price is not None:
                     plans[code] = {
                         "code":  code,
                         "name":  getattr(plan, "name", code),
                         "price": price,
                     }
-            except recurly.errors.NotFoundError:
-                logger.info("Plan %s not found in Recurly — skipping", code)
-            except Exception:
-                logger.exception("Error fetching plan %s", code)
+                    logger.info("Plan loaded: %s — $%.2f", code, price)
+        except Exception:
+            logger.exception("Error listing plans from Recurly")
+            return _respond(self, 502, {"success": False, "message": "Could not load plans from Recurly."})
 
         return _respond(self, 200, {"success": True, "plans": plans})
