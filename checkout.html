@@ -232,6 +232,13 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M6.5 7h8a4 4 0 0 1 0 8H9l-1 5H5l2-13z"/><path d="M9.5 11h6a2 2 0 0 1 0 4H11"/></svg>
                 PayPal
               </button>
+              <!-- Hidden until recurly.ApplePay fires 'ready' -->
+              <button type="button" class="pay-tab" role="tab"
+                      aria-selected="false" aria-controls="panel-applepay" id="tab-applepay" data-tab="applepay"
+                      style="display:none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/></svg>
+                Apple Pay
+              </button>
             </div>
 
             <!-- ── TAB PANEL: Credit Card ─────────────────────────── -->
@@ -314,6 +321,27 @@
                 </p>
               </div>
             </div><!-- /panel-paypal -->
+
+            <!-- ── TAB PANEL: Apple Pay ──────────────────────────── -->
+            <!-- Entire panel hidden until recurly.ApplePay fires 'ready' -->
+            <div id="panel-applepay" class="pay-panel" role="tabpanel" aria-labelledby="tab-applepay" style="display:none;">
+              <div class="applepay-panel">
+                <p class="applepay-desc">
+                  Complete your subscription quickly and securely using Apple Pay.
+                </p>
+                <!--
+                  Apple Pay button — must use -apple-pay-button CSS property.
+                  Per Apple guidelines the appearance may not be customised
+                  beyond choosing a supported style and type.
+                -->
+                <button id="apple-pay-btn" class="apple-pay-button" type="button"
+                        aria-label="Subscribe with Apple Pay"></button>
+                <p class="applepay-note">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  Touch ID or Face ID authenticates your payment. Your card details are never shared with us.
+                </p>
+              </div>
+            </div><!-- /panel-applepay -->
 
             <!-- ── 3D Secure Challenge Overlay ────────────────────────
                  Hidden by default. Recurly.js shows this when the card

@@ -81,6 +81,9 @@
     // ── PayPal Complete ────────────────────────────────────────────────────
     initPayPal();
 
+    // ── Apple Pay ─────────────────────────────────────────────────────────
+    initApplePay();
+
     // Track hosted field states for pre-submission validation
     recurly.on('change', function (state) {
       window._recurlyFields = state.fields;
@@ -170,7 +173,60 @@
   }
 
   /* ----------------------------------------
-     2d. 3D SECURE
+     2d. APPLE PAY
+     Uses recurly.ApplePay({ country, currency, label, total, recurring }).
+     The tab and panel remain hidden until the 'ready' event fires,
+     meaning the browser and device support Apple Pay.
+     Clicking the Apple Pay button calls applePay.begin() which opens
+     the native Apple Pay sheet. On authorisation Recurly fires a 'token'
+     event with token.id which is passed to submitSubscriptionToBackend().
+     Docs: https://docs.recurly.com/recurly-subscriptions/docs/apple-pay
+  ---------------------------------------- */
+  function initApplePay() {
+    const btn   = el('apple-pay-btn');
+    const tab   = el('tab-applepay');
+    const panel = el('panel-applepay');
+    if (!btn || !tab || !panel) return;
+
+    const applePay = recurly.ApplePay({
+      country:   'US',
+      currency:  'USD',
+      label:     planData.name || 'Flowers Forever Subscription',
+      total:     planData.price || '0.00',
+      recurring: true,
+    });
+
+    // Only reveal the tab/panel when Apple Pay is available on this device
+    applePay.on('ready', function () {
+      tab.style.display   = '';
+      panel.style.display = '';
+    });
+
+    applePay.on('token', function (token) {
+      hideMessages();
+      setSubmitLoading(true);
+      submitSubscriptionToBackend(token.id);
+    });
+
+    applePay.on('error', function (err) {
+      console.error('Apple Pay error:', err);
+      setSubmitLoading(false);
+      showError(err.message || 'Apple Pay could not complete. Please try another payment method.');
+    });
+
+    applePay.on('cancel', function () {
+      setSubmitLoading(false);
+    });
+
+    // Clicking the button opens the native Apple Pay payment sheet
+    btn.addEventListener('click', function () {
+      hideMessages();
+      applePay.begin();
+    });
+  }
+
+  /* ----------------------------------------
+     2e. 3D SECURE
      Triggered reactively when the backend responds with
      { requires_three_d_secure: true, action_token_id: '...' }.
      We create recurly.Risk().ThreeDSecure({ actionTokenId }),
@@ -483,6 +539,10 @@
         // PayPal Complete renders its own button — the submit button isn't
         // used for PayPal. If the user hits submit while on the PayPal tab,
         // just reset loading state; the PayPal button handles the flow.
+        setSubmitLoading(false);
+
+      } else if (activeTab === 'applepay') {
+        // Apple Pay is triggered by the Apple Pay button, not the submit button.
         setSubmitLoading(false);
       }
     });
