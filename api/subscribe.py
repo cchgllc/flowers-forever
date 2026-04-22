@@ -91,32 +91,47 @@ def _extract_3ds_token(exc):
     """
     Extract three_d_secure_action_token_id from a Recurly SDK error.
 
-    Recurly SDK v4 places the token directly on exc.error as an attribute.
-    It can appear on both TransactionError and ValidationError with
-    error.type == 'three_d_secure_action_required'.
-    We try multiple paths so the extraction is resilient to SDK variations.
+    Recurly API v3 encodes the 3DS token inside the params list as:
+      {"param": "three_d_secure_action_token_id", "message": "<token>"}
+    i.e. the TOKEN VALUE is in the 'message' field of that param entry.
+
+    We also try a direct attribute in case SDK versions differ.
     """
     try:
         error_obj = getattr(exc, 'error', None)
         if not error_obj:
+            logger.info("3DS extraction: no error_obj on exception")
             return None
 
-        logger.info("Recurly error — type=%s", getattr(error_obj, 'type', 'unknown'))
+        error_type = getattr(error_obj, 'type', 'unknown')
+        params      = getattr(error_obj, 'params', None) or []
+        logger.info("3DS extraction — error.type=%s params=%s", error_type, params)
 
-        # Path 1: direct attribute (Recurly SDK v4 standard location)
+        # Path 1: direct attribute
         token = getattr(error_obj, 'three_d_secure_action_token_id', None)
         if token:
+            logger.info("3DS token found via direct attribute")
             return token
 
-        # Path 2: nested inside params list (older SDK versions / fallback)
-        params = getattr(error_obj, 'params', None) or []
+        # Path 2: params list — each entry is {"param": "<name>", "message": "<value>"}
+        #          The token value lives in entry["message"] where entry["param"]
+        #          == "three_d_secure_action_token_id"
         for param in params:
             if isinstance(param, dict):
-                token = param.get('three_d_secure_action_token_id')
+                if param.get('param') == 'three_d_secure_action_token_id':
+                    token = param.get('message')
+                    if token:
+                        logger.info("3DS token found in params[].message (dict)")
+                        return token
             else:
-                token = getattr(param, 'three_d_secure_action_token_id', None)
-            if token:
-                return token
+                # SDK object — check .param attribute
+                if getattr(param, 'param', None) == 'three_d_secure_action_token_id':
+                    token = getattr(param, 'message', None)
+                    if token:
+                        logger.info("3DS token found in params[].message (object)")
+                        return token
+
+        logger.info("3DS token not found — paths exhausted")
 
     except Exception:
         logger.exception("Error while extracting 3DS token")

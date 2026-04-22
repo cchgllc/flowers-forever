@@ -27,29 +27,38 @@ subscribe_bp = Blueprint("subscribe", __name__)
 def _extract_3ds_token(exc):
     """
     Extract three_d_secure_action_token_id from a Recurly SDK error.
-    Tries multiple paths to be resilient across SDK versions.
+
+    Recurly API v3 encodes the 3DS token inside the params list as:
+      {"param": "three_d_secure_action_token_id", "message": "<token>"}
+    i.e. the TOKEN VALUE is in the 'message' field of that param entry.
     """
     try:
         error_obj = getattr(exc, 'error', None)
         if not error_obj:
             return None
 
-        logger.info("Recurly error type=%s", getattr(error_obj, 'type', 'unknown'))
+        error_type = getattr(error_obj, 'type', 'unknown')
+        params      = getattr(error_obj, 'params', None) or []
+        logger.info("3DS extraction — error.type=%s params=%s", error_type, params)
 
-        # Path 1: direct attribute (Recurly SDK v4 standard location)
+        # Path 1: direct attribute
         token = getattr(error_obj, 'three_d_secure_action_token_id', None)
         if token:
             return token
 
-        # Path 2: nested inside params list (fallback)
-        params = getattr(error_obj, 'params', None) or []
+        # Path 2: params list — token value is in entry["message"] where
+        #          entry["param"] == "three_d_secure_action_token_id"
         for param in params:
             if isinstance(param, dict):
-                token = param.get('three_d_secure_action_token_id')
+                if param.get('param') == 'three_d_secure_action_token_id':
+                    token = param.get('message')
+                    if token:
+                        return token
             else:
-                token = getattr(param, 'three_d_secure_action_token_id', None)
-            if token:
-                return token
+                if getattr(param, 'param', None) == 'three_d_secure_action_token_id':
+                    token = getattr(param, 'message', None)
+                    if token:
+                        return token
 
     except Exception:
         logger.exception("Error while extracting 3DS token")
