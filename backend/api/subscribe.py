@@ -24,6 +24,39 @@ logger = logging.getLogger(__name__)
 subscribe_bp = Blueprint("subscribe", __name__)
 
 
+def _extract_3ds_token(exc):
+    """
+    Extract three_d_secure_action_token_id from a Recurly SDK error.
+    Tries multiple paths to be resilient across SDK versions.
+    """
+    try:
+        error_obj = getattr(exc, 'error', None)
+        if not error_obj:
+            return None
+
+        logger.info("Recurly error type=%s", getattr(error_obj, 'type', 'unknown'))
+
+        # Path 1: direct attribute (Recurly SDK v4 standard location)
+        token = getattr(error_obj, 'three_d_secure_action_token_id', None)
+        if token:
+            return token
+
+        # Path 2: nested inside params list (fallback)
+        params = getattr(error_obj, 'params', None) or []
+        for param in params:
+            if isinstance(param, dict):
+                token = param.get('three_d_secure_action_token_id')
+            else:
+                token = getattr(param, 'three_d_secure_action_token_id', None)
+            if token:
+                return token
+
+    except Exception:
+        logger.exception("Error while extracting 3DS token")
+
+    return None
+
+
 def _account_code_from_email(email: str) -> str:
     """Derive a stable, URL-safe Recurly account code from an email address."""
     safe = re.sub(r"[^a-z0-9._-]", "-", email.lower())
@@ -140,32 +173,22 @@ def create_subscription():
             ),
         }), 201
 
-    except recurly.errors.ValidationError as e:
-        logger.warning("Recurly ValidationError: %s", e)
-        # e.error is a Resource object; cast to str for the message
-        return jsonify({"success": False, "message": str(e)}), 422
-
-    except recurly.errors.NotFoundError as e:
-        logger.warning("Recurly NotFoundError (bad plan/coupon?): %s", e)
-        return jsonify({"success": False, "message": str(e)}), 404
-
-    except recurly.errors.TransactionError as e:
-        logger.warning("Recurly TransactionError: %s", e)
-        # 3D Secure required — the error body contains a three_d_secure_action_token_id
-        # which the frontend needs to launch the challenge UI.
-        tds_token = None
-        try:
-            tds_token = e.error.params[0].get("three_d_secure_action_token_id") if e.error and e.error.params else None
-        except Exception:
-            pass
+    except (recurly.errors.ValidationError, recurly.errors.TransactionError) as e:
+        tds_token = _extract_3ds_token(e)
         if tds_token:
-            logger.info("3DS required, returning action token to frontend")
+            logger.info("3DS required — returning action token to frontend")
             return jsonify({
                 "success": False,
                 "three_d_secure_action_token_id": tds_token,
                 "message": "Card authentication required.",
             }), 402
-        return jsonify({"success": False, "message": str(e)}), 402
+        status = 422 if isinstance(e, recurly.errors.ValidationError) else 402
+        logger.warning("Recurly %s: %s", type(e).__name__, e)
+        return jsonify({"success": False, "message": str(e)}), status
+
+    except recurly.errors.NotFoundError as e:
+        logger.warning("Recurly NotFoundError (bad plan/coupon?): %s", e)
+        return jsonify({"success": False, "message": str(e)}), 404
 
     except recurly.errors.InvalidTokenError as e:
         logger.warning("Recurly InvalidTokenError (bad Recurly.js token): %s", e)

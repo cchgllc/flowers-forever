@@ -87,6 +87,43 @@ def _cors_headers():
     }
 
 
+def _extract_3ds_token(exc):
+    """
+    Extract three_d_secure_action_token_id from a Recurly SDK error.
+
+    Recurly SDK v4 places the token directly on exc.error as an attribute.
+    It can appear on both TransactionError and ValidationError with
+    error.type == 'three_d_secure_action_required'.
+    We try multiple paths so the extraction is resilient to SDK variations.
+    """
+    try:
+        error_obj = getattr(exc, 'error', None)
+        if not error_obj:
+            return None
+
+        logger.info("Recurly error — type=%s", getattr(error_obj, 'type', 'unknown'))
+
+        # Path 1: direct attribute (Recurly SDK v4 standard location)
+        token = getattr(error_obj, 'three_d_secure_action_token_id', None)
+        if token:
+            return token
+
+        # Path 2: nested inside params list (older SDK versions / fallback)
+        params = getattr(error_obj, 'params', None) or []
+        for param in params:
+            if isinstance(param, dict):
+                token = param.get('three_d_secure_action_token_id')
+            else:
+                token = getattr(param, 'three_d_secure_action_token_id', None)
+            if token:
+                return token
+
+    except Exception:
+        logger.exception("Error while extracting 3DS token")
+
+    return None
+
+
 def _respond(handler, status, body):
     encoded = json.dumps(body).encode()
     handler.send_response(status)
@@ -178,25 +215,19 @@ class handler(BaseHTTPRequestHandler):
                 ),
             })
 
-        except recurly.errors.ValidationError as e:
-            return _respond(self, 422, {"success": False, "message": str(e)})
-        except recurly.errors.NotFoundError as e:
-            return _respond(self, 404, {"success": False, "message": str(e)})
-        except recurly.errors.TransactionError as e:
-            # Check if Recurly is requesting 3D Secure authentication
-            tds_token = None
-            try:
-                tds_token = e.error.params[0].get("three_d_secure_action_token_id") if e.error and e.error.params else None
-            except Exception:
-                pass
+        except (recurly.errors.ValidationError, recurly.errors.TransactionError) as e:
+            tds_token = _extract_3ds_token(e)
             if tds_token:
-                logger.info("3DS required, returning action token to frontend")
+                logger.info("3DS required — returning action token to frontend")
                 return _respond(self, 402, {
                     "success": False,
                     "three_d_secure_action_token_id": tds_token,
                     "message": "Card authentication required.",
                 })
-            return _respond(self, 402, {"success": False, "message": str(e)})
+            status = 422 if isinstance(e, recurly.errors.ValidationError) else 402
+            return _respond(self, status, {"success": False, "message": str(e)})
+        except recurly.errors.NotFoundError as e:
+            return _respond(self, 404, {"success": False, "message": str(e)})
         except recurly.errors.InvalidTokenError:
             return _respond(self, 422, {"success": False,
                 "message": "Payment token is invalid or expired. Please re-enter your card details."})
